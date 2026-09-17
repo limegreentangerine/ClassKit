@@ -2,15 +2,52 @@
 
 namespace ClassKit\Api;
 
+use InvalidArgumentException;
+use ClassKit\Api\Enum\ResponseType;
+use ClassKit\Api\Interface\ResponseInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response as CoreResponse;
 
 class Response extends CoreResponse implements ResponseInterface
 {
+    /**
+     * @var string
+     */
     protected string $url;
 
-    protected int $statusCode;
-
+    /**
+     * @var string
+     */
     protected string $body;
+
+    /**
+     * @param mixed $data
+     */
+    protected static function createXmlResponse(mixed $data, int $status, array $headers): self
+    {
+        if (null !== $data && !is_string($data)) {
+            throw new InvalidArgumentException('XML response data must be a string or null.');
+        }
+
+        return new self($data ?? '', $status, $headers);
+    }
+    /**
+     * Create Response from chosen type
+     *
+     * @param ResponseType $type
+     * @param mixed        $data
+     * @param int          $status
+     * @param array        $headers
+     *
+     * @return CoreResponse
+     */
+    public static function fromType(ResponseType $type, mixed $data = [], int $status = 200, array $headers = []): CoreResponse
+    {
+        return match ($type) {
+            ResponseType::JSON => new JsonResponse($data, $status, $headers),
+            ResponseType::XML => self::createXmlResponse($data, $status, $headers),
+        };
+    }
 
     /**
      * Get the value of url
@@ -41,42 +78,6 @@ class Response extends CoreResponse implements ResponseInterface
     }
 
     /**
-     * Sets the response status code.
-     *
-     * If the status text is null it will be automatically populated for the known
-     * status codes and left empty otherwise.
-     *
-     * @return $this
-     *
-     * @throws \InvalidArgumentException When the HTTP status code is not valid
-     *
-     * @final
-     */
-    public function setStatusCode(int $code, ?string $text = null): object
-    {
-        $this->statusCode = $code;
-        if ($this->isInvalid()) {
-            throw new \InvalidArgumentException(sprintf('The HTTP status code "%s" is not valid.', $code));
-        }
-
-        if (null === $text) {
-            $this->statusText = self::$statusTexts[$code] ?? 'unknown status';
-
-            return $this;
-        }
-
-        if (false === $text) {
-            $this->statusText = '';
-
-            return $this;
-        }
-
-        $this->statusText = $text;
-
-        return $this;
-    }
-
-    /**
      * Get the value of body
      */
     public function getBody(): string
@@ -92,6 +93,7 @@ class Response extends CoreResponse implements ResponseInterface
     public function setBody(string $body): self
     {
         $this->body = $body;
+        $this->setContent($body);
 
         return $this;
     }

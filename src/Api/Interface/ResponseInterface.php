@@ -1,6 +1,6 @@
 <?php
 
-namespace ClassKit\Api;
+namespace ClassKit\Api\Interface;
 
 interface ResponseInterface
 {
