@@ -177,6 +177,23 @@ abstract class PackageController extends Package implements PackageInterface
     }
 
     /**
+     * Register Aliases
+     *
+     * @var mixed $config
+     */
+    protected function registerAliases(mixed $config): void
+    {
+        $aliases = $config->get('app.aliases');
+        if ($aliases !== null) {
+            foreach ($this->aliases as $key => $value) {
+                $aliases[$key] = $value;
+            }
+        }
+
+        $config->save('app.aliases', $aliases);
+    }
+
+    /**
      * Register the packages defined service providers.
      */
     protected function registerServiceProviders(): void

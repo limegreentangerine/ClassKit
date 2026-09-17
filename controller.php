@@ -2,7 +2,9 @@
 
 namespace Concrete\Package\ClassKit;
 
-use Concrete\Core\Package\Package;
+use Core;
+use Package;
+use Concrete\Core\Entity\Package as PackageEntity;
 
 class Controller extends Package
 {
@@ -40,37 +42,17 @@ class Controller extends Package
     protected $phpVersionRequired = '8.4';
 
     /**
-     * Package service providers to register.
+     * Package classes to override core concrete classes
      *
-     * eg. 'Concrete\Package\PackageHandle\Src\Providers\PackageServiceProvider'
+     * eg. \Concrete\Core\SomeClass::class => \PackageHandle\SomeClass:class
      *
      * @var array
      */
-    protected $providers = [];
-
-    /**
-     * An array describing the package dependencies.
-     * Keys are package handles.
-     * Values may be:
-     * - false: this package can't be installed if the other package is already installed.
-     * - true: this package can't be installed of the other package is not installed
-     * - a string: this package can't be installed of the other package is not installed or it's installed with an older version
-     * - an array with two strings, representing the minimum and the maximum version of the other package to be installed.
-     *
-     * @var array
-     *
-     * @example [
-     *     // This package can't be installed if a package with handle other_package_1 is already installed.
-     *     'other_package_1' => false,
-     *     // This package can't be installed if a package with handle other_package_2 is not installed.
-     *     'other_package_2' => true,
-     *     // This package can't be installed if a package with handle other_package_3 is not installed, or it has a version prior to 1.0
-     *     'other_package_3' => '1.0',
-     *     // This package can't be installed if a package with handle other_package_4 is not installed, or it has a version prior to 2.0, or it has a version after 2.9
-     *     'other_package_4' => ['2.0', '2.9'],
-     * ]
-     */
-    protected $packageDependencies = [];
+    protected $aliases = [
+        'GlobalArea' => \ClassKit\Area\GlobalArea::class,
+        'PageList' => \ClassKit\Page\PageList::class,
+        'Theme' => \ClassKit\Page\Theme\Theme::class,
+    ];
 
     /**
      * Package class autoloader registrations
@@ -84,14 +66,28 @@ class Controller extends Package
         'src' => '\ClassKit',
     ];
 
+    protected function installOrUpgrade(PackageEntity $pkg): void
+    {
+        $config = Core::make('config');
+        $this->registerAliases($config);
+    }
+
     /**
-     * Package tasks to register.
+     * Register Aliases
      *
-     * eg. 'task_handle' => \PackageHandle\Command\Task\Controller\TaskHandleController::class,
-     *
-     * @var array
+     * @var mixed $config
      */
-    protected $tasks = [];
+    protected function registerAliases(mixed $config): void
+    {
+        $aliases = $config->get('app.aliases');
+        if ($aliases !== null) {
+            foreach ($this->aliases as $key => $value) {
+                $aliases[$key] = $value;
+            }
+        }
+
+        $config->save('app.aliases', $aliases);
+    }
 
     public function getPackageName()
     {
@@ -101,5 +97,24 @@ class Controller extends Package
     public function getPackageDescription()
     {
         return t('Collection of helper classes for LGT packages.');
+    }
+
+    /**
+     * The packages install routine.
+     */
+    public function install()
+    {
+        $pkg = parent::install();
+        $this->installOrUpgrade($pkg);
+    }
+
+    /**
+     * The packages upgrade routine.
+     */
+    public function upgrade()
+    {
+        $pkg = Core::make('Concrete\Core\Package\PackageService')->getByHandle($this->pkgHandle);
+        parent::upgrade();
+        $this->installOrUpgrade($pkg);
     }
 }
