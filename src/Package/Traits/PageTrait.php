@@ -296,7 +296,7 @@ trait PageTrait
      *
      * @return object SinglePage
      */
-    protected function addSinglePage(string $path, $pkg, string $name = '', string $description = ''): SinglePage
+    protected function addSinglePage(string $path, $pkg, string $name = '', string $description = ''): Page
     {
         //Install single page
         $sp = Page::getByPath($path);

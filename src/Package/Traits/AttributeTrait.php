@@ -78,7 +78,7 @@ trait AttributeTrait
      * @param string  $handle
      * @param string  $name
      * @param string  $type
-     * @param object  $categoryKeyObject
+     * @param mixed  $categoryKeyObject
      * @param ?object $attributeSetObject
      * @param Package $pkg
      * @param bool    $selectAllowOtherValues
@@ -89,7 +89,7 @@ trait AttributeTrait
         string $handle,
         string $name,
         string $type,
-        object $categoryKeyObject,
+        mixed $categoryKeyObject,
         ?object $attributeSetObject,
         Package $pkg,
         bool $selectAllowOtherValues = true,
@@ -161,8 +161,8 @@ trait AttributeTrait
      * @param string  $handle
      * @param string  $name
      * @param array   $optionList
-     * @param object  $categoryKeyObject
-     * @param object  $attributeSetObject
+     * @param mixed  $categoryKeyObject
+     * @param mixed  $attributeSetObject
      * @param Package $pkg
      * @param bool    $allowOtherValues
      * @param bool    $hideNoneOption
@@ -174,8 +174,8 @@ trait AttributeTrait
         string $handle,
         string $name,
         array $optionList,
-        $categoryKeyObject,
-        $attributeSetObject,
+        mixed $categoryKeyObject,
+        mixed $attributeSetObject,
         Package $pkg,
         bool $allowOtherValues = false,
         bool $hideNoneOption = true,
