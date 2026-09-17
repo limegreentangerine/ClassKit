@@ -91,7 +91,7 @@ class Controller extends Package
 
     public function getPackageName()
     {
-        return t('Class Kit');
+        return t('ClassKit');
     }
 
     public function getPackageDescription()
