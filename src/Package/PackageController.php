@@ -10,6 +10,7 @@ use Database;
 use Concrete\Core\Package\Package;
 use Concrete\Core\Package\PackageService;
 use ClassKit\Package\Events\PackageInstallEvent;
+use Concrete\Core\Application\Application;
 use Concrete\Core\Entity\Package as PackageEntity;
 use Concrete\Core\Command\Task\Manager as TaskManager;
 
@@ -22,14 +23,14 @@ abstract class PackageController extends Package implements PackageInterface
      *
      * @var string
      */
-    protected string $pkgHandle;
+    protected $pkgHandle;
 
     /**
      * The packages version.
      *
      * @var string
      */
-    protected string $pkgVersion;
+    protected $pkgVersion;
 
     /**
      * The minimum Concrete version compatible with the package.
@@ -37,7 +38,7 @@ abstract class PackageController extends Package implements PackageInterface
      *
      * @var string
      */
-    protected string $appVersionRequired = '9.5.0';
+    protected $appVersionRequired = '9.5.0';
 
     /**
      * The minimum PHP version compatible with the package.
@@ -45,7 +46,7 @@ abstract class PackageController extends Package implements PackageInterface
      *
      * @var string
      */
-    protected string $phpVersionRequired = '8.4';
+    protected $phpVersionRequired = '8.4';
 
     /**
      * Package service providers to register.
@@ -54,7 +55,7 @@ abstract class PackageController extends Package implements PackageInterface
      *
      * @var array
      */
-    protected array $providers = [];
+    protected $providers = [];
 
     /**
      * An array describing the package dependencies.
@@ -78,7 +79,7 @@ abstract class PackageController extends Package implements PackageInterface
      *     'other_package_4' => ['2.0', '2.9'],
      * ]
      */
-    protected array $packageDependencies = [];
+    protected $packageDependencies = [];
 
     /**
      * Package class autoloader registrations
@@ -90,7 +91,7 @@ abstract class PackageController extends Package implements PackageInterface
      * @see https://goo.gl/4wyRtH
      * @var array
      */
-    protected array $pkgAutoloaderRegistries = [];
+    protected $pkgAutoloaderRegistries = [];
 
     /**
      * Package tasks to register.
@@ -99,7 +100,7 @@ abstract class PackageController extends Package implements PackageInterface
      *
      * @var array
      */
-    protected array $tasks = [];
+    protected $tasks = [];
 
     /**
      * Package classes to override core concrete classes
@@ -108,7 +109,7 @@ abstract class PackageController extends Package implements PackageInterface
      *
      * @var array
      */
-    protected array $aliases = [];
+    protected $aliases = [];
 
     /**
      * Concrete Interface overrides to be copied to /application
@@ -117,7 +118,7 @@ abstract class PackageController extends Package implements PackageInterface
      *
      * @var array
      */
-    protected array $applicationOverrides = [];
+    protected $applicationOverrides = [];
 
     /**
      * Does the package provide a full content swap?
@@ -126,7 +127,7 @@ abstract class PackageController extends Package implements PackageInterface
      * @see https://goo.gl/C4m6BG
      * @var bool
      */
-    protected bool $pkgAllowsFullContentSwap = false;
+    protected $pkgAllowsFullContentSwap = false;
 
     /**
      * Does the package provide thumbnails of the files
@@ -135,7 +136,7 @@ abstract class PackageController extends Package implements PackageInterface
      * @see https://goo.gl/C4m6BG
      * @var bool
      */
-    protected bool $pkgContentProvidesFileThumbnails = false;
+    protected $pkgContentProvidesFileThumbnails = false;
 
     /**
      * Should we remove 'Src' from classes that are contained
@@ -146,32 +147,32 @@ abstract class PackageController extends Package implements PackageInterface
      * @see https://goo.gl/4wyRtH
      * @var bool
      */
-    protected bool $pkgAutoloaderMapCoreExtensions = false;
+    protected $pkgAutoloaderMapCoreExtensions = false;
 
     /**
      * Database tables
      *
      * @var array
      */
-    protected array $databaseTables = [];
+    protected $databaseTables = [];
 
     /**
      * Flag to detect if installing or updating, can be useful to not run features on installation
      *
      * @var bool
      */
-    protected bool $installingOrUpdating = false;
+    protected $installingOrUpdating = false;
 
     /**
      * Register Package Tasks
      */
     private function registerTasks(): void
     {
-        $manager = $this->app->make(TaskManager::class);
+        $manager = Core::make(TaskManager::class);
 
         foreach ($this->tasks as $handle => $class) {
             $manager->extend($handle, function () use ($class) {
-                return $this->app->make($class);
+                return Core::make($class);
             });
         }
     }
@@ -198,8 +199,9 @@ abstract class PackageController extends Package implements PackageInterface
      */
     protected function registerServiceProviders(): void
     {
+        $app = Application::getInstance();
         foreach ($this->providers as $class) {
-            (new $class($this->app))->register();
+            (new $class($app))->register();
         }
     }
 
