@@ -1,10 +1,8 @@
 <?php
 
-namespace ClassKit\Api;
+namespace ClassKit\Api\Response;
 
 use ClassKit\Api\Enum\ResponseType;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response as CoreResponse;
 
 class ErrorResponse extends Response
 {
@@ -16,12 +14,12 @@ class ErrorResponse extends Response
      * @param int          $status
      * @param array        $headers
      *
-     * @return CoreResponse
+     * @return self
      */
-    public static function fromType(ResponseType $type, mixed $data = [], int $status = 200, array $headers = []): CoreResponse
+    public static function fromType(ResponseType $type, mixed $data = [], int $status = 200, array $headers = []): self
     {
         return match ($type) {
-            ResponseType::JSON => new JsonResponse($data, $status, $headers),
+            ResponseType::JSON => new self($data, $status, $headers),
             ResponseType::XML => self::createXmlResponse($data, $status, $headers),
         };
     }

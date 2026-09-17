@@ -6,8 +6,10 @@ use SimpleXMLElement;
 use GuzzleHttp\TransferStats;
 use InvalidArgumentException;
 use ClassKit\Api\Enum\ResponseType;
+use ClassKit\Api\Response\Response;
 use ClassKit\Api\Enum\RequestMethod;
 use GuzzleHttp\Client as HttpClient;
+use ClassKit\Api\Response\ErrorResponse;
 use GuzzleHttp\Exception\RequestException;
 use ClassKit\Api\Interface\ConnectionInterface;
 
@@ -40,7 +42,7 @@ abstract class ConnectionController implements ConnectionInterface
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(string $baseUrl, string $format, ?array $headers)
+    public function __construct(string $baseUrl, string $format, ?array $headers = [])
     {
         $this->client = new HttpClient();
 
@@ -56,29 +58,30 @@ abstract class ConnectionController implements ConnectionInterface
     }
 
     /**
-     * Build Fule Request URL from Path
-     *
-     * @var    string $path
-     * @return string
+     * Build a request URL from a path.
      */
     protected function buildRequestUrl(string $path): string
     {
-        return sprintf('%s%s', rtrim($this->getBaseUrl(), '/'), str_replace($this->getBaseUrl(), '', $path));
+        if (preg_match('/^https?:\/\//i', $path) === 1) {
+            return $path;
+        }
+
+        return rtrim($this->getBaseUrl(), '/') . '/' . ltrim($path, '/');
     }
 
-    protected function constructRequestBody(array $data)
+    protected function constructRequestBody(array $data): ?string
     {
         $body = null;
 
         switch ($this->format) {
-            case 'xml':
+            case ResponseType::XML:
                 $xml = new SimpleXMLElement('<root/>');
                 $this->arrayToXml($data, $xml);
-                $body = $xml->asXML() ?? null;
+                $body = $xml->asXML() ?: null;
                 break;
-            case 'json':
+            case ResponseType::JSON:
             default:
-                $body = json_encode($data) ?? null;
+                $body = json_encode($data) ?: null;
                 break;
         }
 
@@ -89,10 +92,10 @@ abstract class ConnectionController implements ConnectionInterface
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
-                $child = $xml->addChild($key);
+                $child = $xml->addChild((string) $key);
                 $this->arrayToXml($value, $child);
             } else {
-                $xml->addChild($key, htmlspecialchars((string) $value));
+                $xml->addChild((string) $key, htmlspecialchars((string) $value));
             }
         }
     }
@@ -145,7 +148,6 @@ abstract class ConnectionController implements ConnectionInterface
         return $this;
     }
 
-
     /**
      * Sets response headers base on constructed type
      */
@@ -154,10 +156,10 @@ abstract class ConnectionController implements ConnectionInterface
         $responseHeaders = [];
 
         switch ($this->format) {
-            case 'json':
+            case ResponseType::JSON:
                 $responseHeaders['Content-Type'] = 'application/json';
                 break;
-            case 'xml':
+            case ResponseType::XML:
                 $responseHeaders['Content-Type'] = 'text/xml';
                 break;
             default:
@@ -177,25 +179,26 @@ abstract class ConnectionController implements ConnectionInterface
      *
      * @return Response
      */
-    public function makeRequest(string $method, string $path, ?array $data, ?array $headers): Response
+    public function makeRequest(string $method, string $path, ?array $data = null, ?array $headers = []): Response
     {
         $url = $this->buildRequestUrl($path);
+        $requestHeaders = array_merge($this->getHeaders(), $headers ?? []);
 
         if (!RequestMethod::tryFrom(strtoupper($method))) {
             return ErrorResponse::fromType(
                 $this->format,
-                $this->constructRequestBody([
-                    'message' => t('Invalid request method: %s', $method)
-                ]),
+                [
+                    'message' => t('Invalid request method: %s', $method),
+                ],
                 Response::HTTP_BAD_REQUEST,
-                $headers
+                $requestHeaders,
             );
         }
 
         try {
             $options = [
                 'debug' => false,
-                'headers' => $this->getHeaders(),
+                'headers' => $requestHeaders,
                 'idn_conversion' => false,
                 'connect_timeout' => 5,
                 'timeout' => 10,
@@ -204,25 +207,35 @@ abstract class ConnectionController implements ConnectionInterface
                 },
             ];
 
-            if ($data) {
+            if ($data !== null) {
                 $options['body'] = $this->constructRequestBody($data);
             }
 
             $res = $this->client->request($method, $url, $options);
 
+            $responseBody = (string) $res->getBody();
+            $responseHeaders = $res->getHeaders();
+
             return Response::fromType(
                 $this->format,
-                $res->getBody(),
+                $this->format === ResponseType::JSON ? json_decode($responseBody, true) ?? $responseBody : $responseBody,
                 $res->getStatusCode(),
-                $res->getHeaders()
+                $responseHeaders,
             );
         } catch (RequestException $e) {
-            return ErrorResponse::fromType(
-                $this->format,
-                $e->getResponse()->getBody(),
-                $e->getResponse()->getStatusCode(),
-                $e->getResponse()->getHeaders()
-            );
+            $response = $e->getResponse();
+            $statusCode = $response ? $response->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
+            $errorHeaders = $response ? $response->getHeaders() : [];
+            $errorBody = $response ? (string) $response->getBody() : [
+                'message' => t('Request failed: %s', $e->getMessage()),
+            ];
+
+            if ($this->format === ResponseType::JSON && is_string($errorBody)) {
+                $decodedBody = json_decode($errorBody, true);
+                $errorBody = $decodedBody ?? ['message' => $errorBody];
+            }
+
+            return ErrorResponse::fromType($this->format, $errorBody, $statusCode, $errorHeaders);
         }
     }
 }

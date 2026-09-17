@@ -2,9 +2,9 @@
 
 namespace ClassKit\Api\Interface;
 
-use ClassKit\Api\Response;
+use ClassKit\Api\Response\Response;
 
 interface ConnectionInterface
 {
-    public function makeRequest(string $method, string $path, ?array $data, ?array $headers): Response;
+    public function makeRequest(string $method, string $path, ?array $data = null, ?array $headers = []): Response;
 }
