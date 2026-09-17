@@ -18,6 +18,10 @@
 		{
 			"name": "Lee Jones",
 			"email": "prolific.jones82@gmail.com"
+		},
+		{
+			"name": "David Hendy",
+			"email": "david@limegreentangerine.co.uk"
 		}
 	],
 	"require-dev": {
