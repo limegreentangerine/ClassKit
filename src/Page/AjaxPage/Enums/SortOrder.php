@@ -1,6 +1,6 @@
 <?php
 
-namespace LgtToolkit\Page\AjaxPage\Enums;
+namespace ClassKit\Page\AjaxPage\Enums;
 
 /**
  * Defines the available sort orders for AJAX page results.

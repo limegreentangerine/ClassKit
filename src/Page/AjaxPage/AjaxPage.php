@@ -1,13 +1,13 @@
 <?php
 
-namespace LgtToolkit\Page\AjaxPage;
+namespace ClassKit\Page\AjaxPage;
 
 use Page;
 use View;
 use Package;
 use PageList;
-use LgtToolkit\Page\TranslationAdaptorTrait;
-use LgtToolkit\Page\AjaxPage\Enums\SortOrder;
+use ClassKit\Page\TranslationAdaptorTrait;
+use ClassKit\Page\AjaxPage\Enums\SortOrder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Concrete\Core\Localization\Translator\Adapter\Laminas\TranslatorAdapter;

@@ -1,8 +1,8 @@
 <?php
 
-namespace LgtToolkit\Page\AjaxPage;
+namespace ClassKit\Page\AjaxPage;
 
-use LgtToolkit\Page\AjaxPage\Enums\SortOrder;
+use ClassKit\Page\AjaxPage\Enums\SortOrder;
 
 /**
  * Represents the request payload for a paginated AJAX page.

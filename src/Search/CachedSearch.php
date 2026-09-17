@@ -1,9 +1,10 @@
 <?php
+
 namespace ClassKit\Search;
 
-use Concrete\Core\Application\Application;
 use Events;
 use Psr\Cache\CacheItemPoolInterface;
+use Concrete\Core\Application\Application;
 
 class CachedSearch
 {
@@ -22,7 +23,35 @@ class CachedSearch
         $this->logger = $this->app->make($loggerClass)->getLogger();
     }
 
-    public function search(object $searchClass, string $searchUrl = "", array $filters = [], callable $queryBuilder = null)
+    protected function storeCacheKey(string $cacheKey): void
+    {
+        $indexItem = $this->cache->getItem($this->indexKey);
+        $index = $indexItem->isHit() ? $indexItem->get() : [];
+
+        if (!in_array($cacheKey, $index, true)) {
+            $index[] = $cacheKey;
+            $indexItem->set($index)->expiresAfter($this->ttl);
+            $this->cache->save($indexItem);
+            $this->logger->addDebug(sprintf('Added search cache key %s with an expiry of %s', $cacheKey, $this->ttl));
+        }
+    }
+
+    protected function getCacheKey(string $searchUrl, array $filters): string
+    {
+        $uh = $this->app->make('helper/url');
+        return $uh->buildQuery($searchUrl, $filters);
+    }
+
+    protected function saveQuery(string $query = '', ?int $results = 0)
+    {
+        $ev = new \Symfony\Component\EventDispatcher\GenericEvent('on_search_block_query', [
+            'query' => $query,
+            'resultCount' => $results,
+        ]);
+        Events::dispatch('on_search_block_query', $ev);
+    }
+
+    public function search(object $searchClass, string $searchUrl = '', array $filters = [], ?callable $queryBuilder = null)
     {
         $cacheKey = $this->getCacheKey($searchUrl, $filters);
 
@@ -47,19 +76,6 @@ class CachedSearch
         $this->saveQuery($cacheKey, count($ids));
 
         return $ids;
-    }
-
-    protected function storeCacheKey(string $cacheKey): void
-    {
-        $indexItem = $this->cache->getItem($this->indexKey);
-        $index = $indexItem->isHit() ? $indexItem->get() : [];
-
-        if (!in_array($cacheKey, $index, true)) {
-            $index[] = $cacheKey;
-            $indexItem->set($index)->expiresAfter($this->ttl);
-            $this->cache->save($indexItem);
-            $this->logger->addDebug(sprintf("Added search cache key %s with an expiry of %s", $cacheKey, $this->ttl));
-        }
     }
 
     public function getAllCachedKeys(): array
@@ -96,21 +112,6 @@ class CachedSearch
         // Delete the index itself
         $this->cache->deleteItem($this->indexKey);
 
-        $this->logger->addDebug("Cleared all cached searches for index key: " . $this->indexKey);
-    }
-
-    protected function getCacheKey(string $searchUrl, array $filters): string
-    {
-        $uh = $this->app->make("helper/url");
-        return $uh->buildQuery($searchUrl, $filters);
-    }
-
-    protected function saveQuery(string $query = "", ?int $results = 0)
-    {
-        $ev = new \Symfony\Component\EventDispatcher\GenericEvent('on_search_block_query', [
-            'query' => $query,
-            'resultCount' => $results
-        ]);
-        Events::dispatch('on_search_block_query', $ev);
+        $this->logger->addDebug('Cleared all cached searches for index key: ' . $this->indexKey);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace LgtToolkit\Page;
+namespace ClassKit\Page;
 
 use Concrete\Core\Attribute\Key\CollectionKey;
 use Concrete\Core\Attribute\Controller as AttributeController;

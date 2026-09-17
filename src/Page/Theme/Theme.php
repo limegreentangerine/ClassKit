@@ -1,6 +1,6 @@
 <?php
 
-namespace LgtToolkit\Page\Theme;
+namespace ClassKit\Page\Theme;
 
 use Events;
 use Concrete\Core\Package\Package;

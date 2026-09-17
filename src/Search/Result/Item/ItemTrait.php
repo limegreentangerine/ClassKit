@@ -1,8 +1,9 @@
 <?php
+
 namespace ClassKit\Search\Result\Item;
 
-use Concrete\Core\Search\Result\Result;
 use Concrete\Core\Search\Column\Set;
+use Concrete\Core\Search\Result\Result;
 
 trait ItemTrait
 {
@@ -13,7 +14,7 @@ trait ItemTrait
 
     /**
      * @var Result $result
-     * @var Set $columns
+     * @var Set    $columns
      * @var object $item
      */
     public function __construct(Result $result, Set $columns, object $item)

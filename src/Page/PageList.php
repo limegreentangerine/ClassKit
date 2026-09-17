@@ -1,6 +1,6 @@
 <?php
 
-namespace LgtToolkit\Page;
+namespace ClassKit\Page;
 
 class PageList extends \Concrete\Core\Page\PageList
 {

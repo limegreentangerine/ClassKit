@@ -1,11 +1,11 @@
 <?php
 
-namespace LgtToolkit\Page\AjaxPage;
+namespace ClassKit\Page\AjaxPage;
 
-use Page;
-use Package;
-use PageList;
-use LgtToolkit\Page\AjaxPage\Enums\SortOrder;
+use ClassKit\Page\PageList;
+use Concrete\Core\Page\Page;
+use Concrete\Core\Entity\Package;
+use ClassKit\Page\AjaxPage\Enums\SortOrder;
 
 /**
  * Holds the configuration options for a paginated AJAX page.
@@ -15,16 +15,16 @@ final readonly class AjaxPageConfig
     /**
      * Create a new AJAX page configuration object.
      *
-     * @param int           $startPage         The first page number to load.
-     * @param int           $perPage           The number of records to include per page.
-     * @param SortOrder     $sortOrder         The sort order to apply.
-     * @param string|null   $cardPath          The card template path.
-     * @param PageList|null $pl                The page list to paginate.
-     * @param Page|null     $parent            The parent page to restrict results to.
-     * @param bool|null     $debug             Whether debugging is enabled.
-     * @param bool|null     $includeExclusions Whether excluded pages should be included.
-     * @param string|null   $noResultsMessage  The empty-state message.
-     * @param Package|null  $pkg               The package providing the page card templates.
+     * @param int          $startPage         The first page number to load.
+     * @param int          $perPage           The number of records to include per page.
+     * @param SortOrder    $sortOrder         The sort order to apply.
+     * @param ?string      $cardPath          The card template path.
+     * @param ?PageList    $pl                The page list to paginate.
+     * @param ?Page        $parent            The parent page to restrict results to.
+     * @param ?bool        $debug             Whether debugging is enabled.
+     * @param ?bool        $includeExclusions Whether excluded pages should be included.
+     * @param ?string      $noResultsMessage  The empty-state message.
+     * @param Package|null $pkg               The package providing the page card templates.
      */
     public function __construct(
         public int $startPage,

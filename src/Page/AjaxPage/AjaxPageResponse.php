@@ -1,6 +1,6 @@
 <?php
 
-namespace LgtToolkit\Page\AjaxPage;
+namespace ClassKit\Page\AjaxPage;
 
 final readonly class AjaxPageResponse
 {

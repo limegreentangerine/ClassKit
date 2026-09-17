@@ -1,4 +1,5 @@
 <?php
+
 namespace ClassKit\Search;
 
 use Pagerfanta\View\TwitterBootstrap5View;
@@ -28,7 +29,7 @@ class Result extends SearchResult
                     'prev_message' => tc('Pagination', '&larr; Previous'),
                     'next_message' => tc('Pagination', 'Next &rarr;'),
                     'active_suffix' => '<span class="sr-only">' . tc('Pagination', '(current)') . '</span>',
-                ]
+                ],
             );
         } else {
             $result = '';
