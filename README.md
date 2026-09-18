@@ -1,5 +1,7 @@
 # ClassKit
 
+[![Tests](https://github.com/limegreentangerine/ClassKit/actions/workflows/Tests.yml/badge.svg)](https://github.com/limegreentangerine/ClassKit/actions/workflows/Tests.yml)
+
 ClassKit is a shared utility package for Limegreentangerine projects that build on Concrete CMS and concrete5 package infrastructure. It brings together common helper classes, package lifecycle abstractions, and extension patterns that reduce boilerplate across LGT projects.
 
 ## Overview
@@ -53,7 +55,15 @@ src/
 │   └── Logger.php
 ├── Package/
 │   ├── PackageController.php
-│   └── PackageInterface.php
+│   ├── PackageInterface.php
+│   └── Traits/
+│       ├── AttributeTrait.php
+│       ├── BlockTrait.php
+│       ├── ExpressTrait.php
+│       ├── FileTrait.php
+│       ├── PageTrait.php
+│       ├── StorageTrait.php
+|       └── ThemeTrait.php
 ├── Page/
 │   ├── Page.php
 │   ├── PageList.php
