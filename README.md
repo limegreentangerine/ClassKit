@@ -1,6 +1,6 @@
 # ClassKit
 
-A shared utility package for Lime Green Tangerine concrete5 projects and related package development. ClassKit centralizes small, reusable helpers for package bootstrapping, page and search handling, environment checks, caching, and API integrations so that LGT packages can share a consistent base without duplicating boilerplate.
+A shared utility package for Limegreentangerine concrete5 projects and related package development. ClassKit centralizes small, reusable helpers for package bootstrapping, page and search handling, environment checks, caching, and API integrations so that LGT packages can share a consistent base without duplicating boilerplate.
 
 ## Overview
 
