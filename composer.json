@@ -2,7 +2,7 @@
 	"name": "limegreentangerine/class_kit",
 	"description": "Collection of helper classes for LGT packages.",
 	"type": "concrete5-package",
-	"license": "proprietary",
+	"license": "MIT",
 	"minimum-stability": "stable",
 	"autoload": {
 		"psr-4": {
