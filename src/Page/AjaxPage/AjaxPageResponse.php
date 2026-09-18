@@ -4,6 +4,9 @@ namespace ClassKit\Page\AjaxPage;
 
 final readonly class AjaxPageResponse
 {
+    /**
+     * Executes __construct.
+     */
     public function __construct(
         /**
          * @var array<int, Page>
@@ -14,6 +17,9 @@ final readonly class AjaxPageResponse
         public ?bool $hasNextPage,
     ) {}
 
+    /**
+     * Executes toArray.
+     */
     public function toArray(): array
     {
         return [

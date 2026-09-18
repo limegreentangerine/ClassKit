@@ -5,6 +5,9 @@ namespace ClassKit\Search\Result\Item;
 use Concrete\Core\Search\Column\Set;
 use Concrete\Core\Search\Result\Result;
 
+/**
+ * Trait ItemTrait.
+ */
 trait ItemTrait
 {
     /**
@@ -23,6 +26,9 @@ trait ItemTrait
         $this->entity = $item;
     }
 
+    /**
+     * Executes getViewUrl.
+     */
     abstract public function getViewUrl();
 
     /**

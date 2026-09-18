@@ -7,6 +7,9 @@ use Concrete\Core\Localization\Localization;
 use Concrete\Core\Multilingual\Page\Section\Section;
 use Concrete\Core\Localization\Translator\Adapter\Laminas\TranslatorAdapter;
 
+/**
+ * Trait TranslationAdaptorTrait.
+ */
 trait TranslationAdaptorTrait
 {
     /**

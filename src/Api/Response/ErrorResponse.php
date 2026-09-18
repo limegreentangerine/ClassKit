@@ -4,6 +4,9 @@ namespace ClassKit\Api\Response;
 
 use ClassKit\Api\Enum\ResponseType;
 
+/**
+ * Class ErrorResponse.
+ */
 class ErrorResponse extends Response
 {
     /**

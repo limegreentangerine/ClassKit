@@ -6,10 +6,16 @@ use Core;
 use Concrete\Core\Production\Modes;
 use Concrete\Core\Site\Config\Liaison;
 
+/**
+ * Class Environment.
+ */
 class Environment
 {
     protected Liaison $config;
 
+    /**
+     * Executes __construct.
+     */
     public function __construct()
     {
         $this->config = Core::make('config');

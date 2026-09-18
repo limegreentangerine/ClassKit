@@ -11,6 +11,9 @@ use Concrete\Core\Attribute\Set as AttributeSet;
 use Concrete\Core\Attribute\Type as AttributeType;
 use Concrete\Core\Page\Type\Composer\Control\CollectionAttributeControl;
 
+/**
+ * Trait AttributeTrait.
+ */
 trait AttributeTrait
 {
     /**
@@ -78,7 +81,7 @@ trait AttributeTrait
      * @param string  $handle
      * @param string  $name
      * @param string  $type
-     * @param mixed  $categoryKeyObject
+     * @param mixed   $categoryKeyObject
      * @param ?object $attributeSetObject
      * @param Package $pkg
      * @param bool    $selectAllowOtherValues
@@ -161,8 +164,8 @@ trait AttributeTrait
      * @param string  $handle
      * @param string  $name
      * @param array   $optionList
-     * @param mixed  $categoryKeyObject
-     * @param mixed  $attributeSetObject
+     * @param mixed   $categoryKeyObject
+     * @param mixed   $attributeSetObject
      * @param Package $pkg
      * @param bool    $allowOtherValues
      * @param bool    $hideNoneOption

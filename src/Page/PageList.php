@@ -2,6 +2,9 @@
 
 namespace ClassKit\Page;
 
+/**
+ * Class PageList.
+ */
 class PageList extends \Concrete\Core\Page\PageList
 {
     /**

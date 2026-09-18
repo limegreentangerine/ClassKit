@@ -9,11 +9,14 @@ use Request;
 use Database;
 use Concrete\Core\Package\Package;
 use Concrete\Core\Package\PackageService;
-use ClassKit\Package\Events\PackageInstallEvent;
 use Concrete\Core\Application\Application;
+use ClassKit\Package\Events\PackageInstallEvent;
 use Concrete\Core\Entity\Package as PackageEntity;
 use Concrete\Core\Command\Task\Manager as TaskManager;
 
+/**
+ * Class PackageController.
+ */
 abstract class PackageController extends Package implements PackageInterface
 {
     /**
@@ -326,6 +329,9 @@ abstract class PackageController extends Package implements PackageInterface
         Events::dispatch('package_installation_event', $pkg);
     }
 
+    /**
+     * Executes registerPackageEvent.
+     */
     public function registerPackageEvent()
     {
         Events::addListener('package_installation_event', function (PackageInstallEvent $event) {

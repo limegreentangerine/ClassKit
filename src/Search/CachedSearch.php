@@ -6,6 +6,9 @@ use Events;
 use Psr\Cache\CacheItemPoolInterface;
 use Concrete\Core\Application\Application;
 
+/**
+ * Class CachedSearch.
+ */
 class CachedSearch
 {
     protected Application $app;
@@ -14,6 +17,9 @@ class CachedSearch
     protected object $logger;
     protected string $indexKey;
 
+    /**
+     * Executes __construct.
+     */
     public function __construct(object $loggerClass, string $indexKey = 'search_results', int $ttl = 3600)
     {
         $this->app = \Concrete\Core\Support\Facade\Application::getFacadeApplication();
@@ -23,6 +29,9 @@ class CachedSearch
         $this->logger = $this->app->make($loggerClass)->getLogger();
     }
 
+    /**
+     * Executes storeCacheKey.
+     */
     protected function storeCacheKey(string $cacheKey): void
     {
         $indexItem = $this->cache->getItem($this->indexKey);
@@ -36,12 +45,18 @@ class CachedSearch
         }
     }
 
+    /**
+     * Executes getCacheKey.
+     */
     protected function getCacheKey(string $searchUrl, array $filters): string
     {
         $uh = $this->app->make('helper/url');
         return $uh->buildQuery($searchUrl, $filters);
     }
 
+    /**
+     * Executes saveQuery.
+     */
     protected function saveQuery(string $query = '', ?int $results = 0)
     {
         $ev = new \Symfony\Component\EventDispatcher\GenericEvent('on_search_block_query', [
@@ -51,6 +66,9 @@ class CachedSearch
         Events::dispatch('on_search_block_query', $ev);
     }
 
+    /**
+     * Executes search.
+     */
     public function search(object $searchClass, string $searchUrl = '', array $filters = [], ?callable $queryBuilder = null)
     {
         $cacheKey = $this->getCacheKey($searchUrl, $filters);
@@ -78,6 +96,9 @@ class CachedSearch
         return $ids;
     }
 
+    /**
+     * Executes getAllCachedKeys.
+     */
     public function getAllCachedKeys(): array
     {
         $indexItem = $this->cache->getItem($this->indexKey);
@@ -99,6 +120,9 @@ class CachedSearch
         return $validKeys;
     }
 
+    /**
+     * Executes clearAll.
+     */
     public function clearAll(): void
     {
         $indexItem = $this->cache->getItem($this->indexKey);

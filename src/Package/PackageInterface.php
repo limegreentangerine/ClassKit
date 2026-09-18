@@ -4,6 +4,9 @@ namespace ClassKit\Package;
 
 use Concrete\Core\Entity\Package;
 
+/**
+ * Interface PackageInterface.
+ */
 interface PackageInterface
 {
     /**

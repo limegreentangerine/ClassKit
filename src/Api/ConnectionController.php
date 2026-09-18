@@ -13,6 +13,9 @@ use ClassKit\Api\Response\ErrorResponse;
 use GuzzleHttp\Exception\RequestException;
 use ClassKit\Api\Interface\ConnectionInterface;
 
+/**
+ * Class ConnectionController.
+ */
 abstract class ConnectionController implements ConnectionInterface
 {
     /**
@@ -69,6 +72,9 @@ abstract class ConnectionController implements ConnectionInterface
         return rtrim($this->getBaseUrl(), '/') . '/' . ltrim($path, '/');
     }
 
+    /**
+     * Executes constructRequestBody.
+     */
     protected function constructRequestBody(array $data): ?string
     {
         $body = null;
@@ -88,6 +94,9 @@ abstract class ConnectionController implements ConnectionInterface
         return $body;
     }
 
+    /**
+     * Executes arrayToXml.
+     */
     protected function arrayToXml(array $data, SimpleXMLElement $xml): void
     {
         foreach ($data as $key => $value) {

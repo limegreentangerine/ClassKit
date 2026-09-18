@@ -7,6 +7,9 @@ use ClassKit\Api\Enum\ResponseType;
 use ClassKit\Api\Interface\ResponseInterface;
 use Symfony\Component\HttpFoundation\Response as CoreResponse;
 
+/**
+ * Class Response.
+ */
 class Response extends CoreResponse implements ResponseInterface
 {
     /**
@@ -19,6 +22,9 @@ class Response extends CoreResponse implements ResponseInterface
      */
     protected string $body = '';
 
+    /**
+     * Executes __construct.
+     */
     public function __construct(mixed $content = '', int $status = 200, array $headers = [])
     {
         if (is_array($content) || is_object($content)) {
@@ -117,6 +123,9 @@ class Response extends CoreResponse implements ResponseInterface
         return $this;
     }
 
+    /**
+     * Executes getStatusText.
+     */
     public function getStatusText(string $code): string
     {
         return self::$statusTexts[$code] ?? 'Unknown status';

@@ -20,6 +20,9 @@ use Concrete\Core\Entity\File\Version as FileVersion;
 use Concrete\Core\Entity\File\Version as FileVersionEntity;
 use Concrete\Core\File\StorageLocation\StorageLocationFactory;
 
+/**
+ * Trait ImportFileTrait.
+ */
 trait ImportFileTrait
 {
     /**

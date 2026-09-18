@@ -6,12 +6,18 @@ use Core;
 use Monolog\Logger as MonologLogger;
 use Concrete\Core\Logging\LoggerFactory;
 
+/**
+ * Class Logger.
+ */
 class Logger extends MonologLogger
 {
     protected MonologLogger $logger;
     protected string $channel;
     protected array $context = [];
 
+    /**
+     * Executes __construct.
+     */
     public function __construct(string $name)
     {
         $this->channel = $name;

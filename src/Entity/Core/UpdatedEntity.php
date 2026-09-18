@@ -27,6 +27,9 @@ abstract class UpdatedEntity extends BaseEntity
      */
     protected DateTimeImmutable $date_updated;
 
+    /**
+     * Executes __construct.
+     */
     public function __construct()
     {
         $now = new DateTimeImmutable();
@@ -45,26 +48,41 @@ abstract class UpdatedEntity extends BaseEntity
     {
         $this->setDateUpdated(new DateTimeImmutable());
     }
+    /**
+     * Executes getDateCreated.
+     */
     public function getDateCreated(): DateTimeImmutable
     {
         return $this->date_created;
     }
 
+    /**
+     * Executes getDateCreatedString.
+     */
     public function getDateCreatedString(string $format = 'd/m/Y H:i'): string
     {
         return $this->date_created->format($format);
     }
 
+    /**
+     * Executes getDateUpdated.
+     */
     public function getDateUpdated(): DateTimeImmutable
     {
         return $this->date_updated;
     }
 
+    /**
+     * Executes getDateUpdatedString.
+     */
     public function getDateUpdatedString(string $format = 'd/m/Y H:i'): string
     {
         return $this->date_updated->format($format);
     }
 
+    /**
+     * Executes setDateUpdated.
+     */
     public function setDateUpdated(DateTimeImmutable $value): void
     {
         $this->date_updated = $value;

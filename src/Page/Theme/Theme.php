@@ -7,6 +7,9 @@ use Concrete\Core\Package\Package;
 use Concrete\Core\Page\Theme\Theme as CoreTheme;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
+/**
+ * Class Theme.
+ */
 class Theme extends CoreTheme
 {
     /**
@@ -43,6 +46,9 @@ class Theme extends CoreTheme
         return $l;
     }
 
+    /**
+     * Executes buildImageMap.
+     */
     public static function buildImageMap(string $themeHandle, Package $pkg)
     {
         $themeInstallEvent = new GenericEvent();

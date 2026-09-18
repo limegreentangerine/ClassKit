@@ -5,6 +5,9 @@ namespace ClassKit\Search;
 use Pagerfanta\View\TwitterBootstrap5View;
 use Concrete\Core\Search\Result\Result as SearchResult;
 
+/**
+ * Class Result.
+ */
 class Result extends SearchResult
 {
     /**

@@ -9,6 +9,9 @@ use PageTemplate;
 use Concrete\Core\Entity\Package;
 use Concrete\Core\Page\Type\PublishTarget\Type\Type as PublishTargetType;
 
+/**
+ * Trait PageTrait.
+ */
 trait PageTrait
 {
     /**

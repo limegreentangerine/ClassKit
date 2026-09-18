@@ -16,8 +16,14 @@ abstract class BaseEntity
      */
     protected int $id;
 
+    /**
+     * Executes __construct.
+     */
     public function __construct() {}
 
+    /**
+     * Executes getID.
+     */
     public function getID(): int
     {
         return $this->id;

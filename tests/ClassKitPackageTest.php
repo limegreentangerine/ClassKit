@@ -2,13 +2,13 @@
 
 namespace ClassKit\Tests;
 
-use ClassKit\Api\Enum\RequestMethod;
+use PHPUnit\Framework\TestCase;
 use ClassKit\Api\Enum\ResponseType;
+use ClassKit\Api\Enum\RequestMethod;
 use ClassKit\Page\AjaxPage\AjaxPageConfig;
 use ClassKit\Page\AjaxPage\AjaxPageRequest;
-use ClassKit\Page\AjaxPage\AjaxPageResponse;
 use ClassKit\Page\AjaxPage\Enums\SortOrder;
-use PHPUnit\Framework\TestCase;
+use ClassKit\Page\AjaxPage\AjaxPageResponse;
 
 final class ClassKitPackageTest extends TestCase
 {

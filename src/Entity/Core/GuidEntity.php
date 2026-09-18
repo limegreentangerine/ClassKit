@@ -15,13 +15,22 @@ abstract class GuidEntity
      */
     protected string $id;
 
+    /**
+     * Executes __construct.
+     */
     public function __construct() {}
 
+    /**
+     * Executes getID.
+     */
     public function getID(): string
     {
         return $this->id;
     }
 
+    /**
+     * Executes getByID.
+     */
     public static function getByID(string $id): mixed
     {
         $em = \ORM::entityManager();

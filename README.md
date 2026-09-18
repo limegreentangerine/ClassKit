@@ -1,20 +1,12 @@
 # ClassKit
 
-A shared utility package for Limegreentangerine concrete5 projects and related package development. ClassKit centralizes small, reusable helpers for package bootstrapping, page and search handling, environment checks, caching, and API integrations so that LGT packages can share a consistent base without duplicating boilerplate.
+ClassKit is a shared utility package for Limegreentangerine projects that build on Concrete CMS and concrete5 package infrastructure. It brings together common helper classes, package lifecycle abstractions, and extension patterns that reduce boilerplate across LGT projects.
 
 ## Overview
 
-ClassKit is designed to be used inside concrete5 packages and custom projects running on Concrete CMS 9.5+ and PHP 8.4 or newer. It includes a mix of concrete5-aware wrappers, interfaces, and helper classes that simplify common tasks while keeping the package lightweight and easy to extend.
+This package is intended for internal use in Concrete CMS package development. It includes reusable functionality for package registration, page and search utilities, file import helpers, environment checks, logging, and simple API client wrappers.
 
-The package is intentionally focused on practical code patterns used across LGT package development, including:
-
-- localized global area helpers
-- page list extensions and topic filters
-- package lifecycle helpers and contracts
-- environment detection utilities
-- cached search patterns
-- API connection abstractions and response formatting
-- logging and package orchestration helpers
+The goal is to keep common logic in one place while staying lightweight and easy to extend.
 
 ## Requirements
 
@@ -24,13 +16,26 @@ The package is intentionally focused on practical code patterns used across LGT 
 
 ## Installation
 
-Install the package with Composer:
+Install the package via Composer:
 
 ```bash
 composer require limegreentangerine/class_kit
 ```
 
-If you are using this as a concrete5 package in a local package workspace, place it in the relevant package structure and ensure Composer autoloading is active before installing the package in Concrete.
+If this is being used as part of a local package workspace, make sure Composer autoloading is enabled and the package is installed in the Concrete CMS environment where the parent package is loaded.
+
+## Included helpers
+
+The package currently includes the following functionality:
+
+- Page and page-list extensions for common attribute and topic filtering use cases
+- Global area localization for multilingual page layouts
+- Shared package controller and package interface patterns
+- Environment checks for local, staging, and production mode
+- Cached search helper for page and content lookup flows
+- File import utility for bringing remote images into the Concrete file manager
+- API request wrapper for JSON/XML service integrations
+- Logger abstraction and standard response handling
 
 ## Package structure
 
@@ -59,7 +64,7 @@ src/
 controller.php
 ```
 
-## Common usage
+## Example usage
 
 ### Environment checks
 
@@ -67,11 +72,11 @@ controller.php
 use ClassKit\Environment\Environment;
 
 if (Environment::isLocal()) {
-    // local environment logic
+    // Local-only setup
 }
 
 if (Environment::isProduction()) {
-    // production-only logic
+    // Production-only setup
 }
 ```
 
@@ -83,9 +88,9 @@ use ClassKit\Area\GlobalArea;
 $area = new GlobalArea('Header');
 ```
 
-This creates a locale-aware area handle for multilingual site builds.
+This helps produce locale-aware area handles for multilingual pages.
 
-### Filtering pages by multiple topics
+### Page list filtering
 
 ```php
 use ClassKit\Page\PageList;
@@ -93,12 +98,12 @@ use ClassKit\Page\PageList;
 $pageList = new PageList();
 $pageList->filterByMultipleTopics([
     [
-        'handle' => 'topicAttributeHandle',
+        'handle' => 'topics',
         'topic' => 42,
     ],
     [
-        'handle' => 'anotherTopicAttributeHandle',
-        'topic' => 'ExampleTopic',
+        'handle' => 'related_topics',
+        'topic' => 'Example Topic',
     ],
 ], 'AND');
 ```
@@ -119,7 +124,7 @@ $ids = $search->search(
 );
 ```
 
-### API connection wrapper
+### API client base class
 
 ```php
 use ClassKit\Api\ConnectionController;
@@ -135,17 +140,33 @@ class MyApi extends ConnectionController
 }
 ```
 
-The base connection class helps standardize request construction, response handling, and payload formatting for JSON or XML APIs.
+The API base class centralizes request URL construction, payload encoding, header management, and response handling for JSON or XML APIs.
+
+### File import helper
+
+```php
+use ClassKit\File\ImportFileTrait;
+
+class MyPackageController
+{
+    use ImportFileTrait;
+
+    public function importFromRemoteUrl(string $imageUrl): void
+    {
+        $file = $this->importImage($imageUrl, 'Products', 'Imported Images');
+    }
+}
+```
 
 ## Development
 
-Run the project tests with Composer:
+Run the package test suite using Composer:
 
 ```bash
 composer test
 ```
 
-Additional formatting and validation commands are available through the Composer scripts:
+Additional formatting and validation commands are available:
 
 ```bash
 composer run format:php
@@ -156,9 +177,9 @@ composer run format:js:check
 
 ## Notes
 
-- This project is a helper package and is not intended to be a standalone consumer-facing application.
-- It is designed to be imported into concrete5 package development workflows where shared logic is needed across multiple packages.
-- The package registers targeted aliases and helper patterns to support LGT package conventions in Concrete CMS environments.
+- This project is a shared helper package, not a standalone customer-facing application.
+- It is intended to be consumed by Concrete CMS packages that need a common base layer across multiple projects.
+- The package includes targeted aliases and conventions for standard Concrete CMS package workflows.
 
 ## License
 

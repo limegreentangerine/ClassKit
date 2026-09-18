@@ -5,6 +5,9 @@ namespace ClassKit\Package\Traits;
 use ClassKit\File\ImportFileTrait;
 use Concrete\Core\File\Set\Set as FileSet;
 
+/**
+ * Trait FileTrait.
+ */
 trait FileTrait
 {
     use ImportFileTrait;

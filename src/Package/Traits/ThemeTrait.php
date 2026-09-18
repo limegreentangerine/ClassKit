@@ -5,6 +5,9 @@ namespace ClassKit\Package\Traits;
 use PageTheme;
 use Concrete\Core\Entity\Package;
 
+/**
+ * Trait ThemeTrait.
+ */
 trait ThemeTrait
 {
     /**

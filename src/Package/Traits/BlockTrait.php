@@ -8,6 +8,9 @@ use Concrete\Core\Block\BlockType\Set as BlockTypeSet;
 use Concrete\Core\Page\Type\Composer\Control\BlockControl;
 use Concrete\Core\Entity\Block\BlockType\BlockType as BlockTypeEntity;
 
+/**
+ * Trait BlockTrait.
+ */
 trait BlockTrait
 {
     /**

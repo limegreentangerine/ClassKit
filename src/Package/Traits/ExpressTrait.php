@@ -7,6 +7,9 @@ use Concrete\Core\Entity\Package;
 use Concrete\Core\Express\EntryList;
 use Concrete\Core\Support\Facade\Express;
 
+/**
+ * Trait ExpressTrait.
+ */
 trait ExpressTrait
 {
     /**
