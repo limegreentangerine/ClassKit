@@ -39,6 +39,37 @@ The package currently includes the following functionality:
 - API request wrapper for JSON/XML service integrations
 - Logger abstraction and standard response handling
 
+## Package traits
+
+The package includes a set of reusable traits in `src/Package/Traits` for common Concrete CMS package setup tasks. These are designed to be used inside package controllers or installer classes and cover the most repetitive package configuration work.
+
+Available traits:
+
+- `AttributeTrait` - create attribute types, sets, keys, select options, and page-type composer controls
+- `BlockTrait` - install block types, register block type sets, and add page-type composer block controls
+- `ExpressTrait` - create Express objects, generate simple forms, and manage default view/edit forms
+- `FileTrait` - create file sets and reuse the remote image import helpers
+- `PageTrait` - add pages, page types, and publish targets
+- `StorageTrait` - register remote or custom storage types
+- `ThemeTrait` - install or fetch page themes by handle
+
+Example:
+
+```php
+use ClassKit\Package\Traits\AttributeTrait;
+use ClassKit\Package\Traits\PageTrait;
+use ClassKit\Package\Traits\ThemeTrait;
+
+class MyPackageController extends Package
+{
+    use AttributeTrait;
+    use PageTrait;
+    use ThemeTrait;
+}
+```
+
+These traits simplify the package installation and configuration flow while keeping logic in a reusable, predictable pattern.
+
 ## Package structure
 
 ```text
@@ -63,7 +94,7 @@ src/
 │       ├── FileTrait.php
 │       ├── PageTrait.php
 │       ├── StorageTrait.php
-|       └── ThemeTrait.php
+│       └── ThemeTrait.php
 ├── Page/
 │   ├── Page.php
 │   ├── PageList.php
