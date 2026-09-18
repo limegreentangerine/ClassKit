@@ -35,8 +35,8 @@ namespace Concrete\Core\File\StorageLocation\Type {
 
 namespace ClassKit\Tests {
 
-    use ClassKit\Package\Traits\StorageTrait;
     use PHPUnit\Framework\TestCase;
+    use ClassKit\Package\Traits\StorageTrait;
 
     final class StorageTraitTest extends TestCase
     {
