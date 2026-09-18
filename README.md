@@ -210,9 +210,20 @@ composer test
 Additional formatting and validation commands are available:
 
 ```bash
+composer format
+```
+
+This runs the following formatting commands:
+
+```bash
 composer run format:php
-composer run format:php:check
 composer run format:js
+```
+
+Check formatting without changes:
+
+```bash
+composer run format:php:check
 composer run format:js:check
 ```
 

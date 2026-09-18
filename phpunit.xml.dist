@@ -6,6 +6,10 @@
     bootstrap="vendor/autoload.php"
     colors="true"
 >
+    <php>
+        <ini name="error_reporting" value="E_ALL &amp; ~E_DEPRECATED &amp; ~E_USER_DEPRECATED"/>
+    </php>
+
     <testsuites>
         <testsuite name="Class Kit">
             <directory>tests</directory>

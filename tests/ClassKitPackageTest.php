@@ -29,6 +29,20 @@ final class ClassKitPackageTest extends TestCase
         $this->assertCount(2, ResponseType::cases());
     }
 
+    public function testSortOrderEnumValues(): void
+    {
+        $this->assertSame('sitemap_asc', SortOrder::SitemapAsc->value);
+        $this->assertSame('sitemap_desc', SortOrder::SitemapDesc->value);
+        $this->assertSame('date_asc', SortOrder::DateAsc->value);
+        $this->assertSame('date_desc', SortOrder::DateDesc->value);
+        $this->assertSame('modified_date_asc', SortOrder::ModifiedDateAsc->value);
+        $this->assertSame('modified_date_desc', SortOrder::ModifiedDatedesc->value);
+        $this->assertSame('random', SortOrder::Random->value);
+        $this->assertSame('name_asc', SortOrder::NameAsc->value);
+        $this->assertSame('name_desc', SortOrder::Namedesc->value);
+        $this->assertCount(9, SortOrder::cases());
+    }
+
     public function testAjaxPageRequestFromArrayAndToArray(): void
     {
         $request = AjaxPageRequest::fromArray([
@@ -61,6 +75,16 @@ final class ClassKitPackageTest extends TestCase
             'perPage' => null,
             'sortOrder' => null,
         ], $request->toArray());
+    }
+
+    public function testAjaxPageRequestRejectsUnknownSortOrder(): void
+    {
+        $this->expectException(\ValueError::class);
+
+        AjaxPageRequest::fromArray([
+            'pageNum' => 1,
+            'sortOrder' => 'not-a-valid-sort-order',
+        ]);
     }
 
     public function testAjaxPageResponseToArray(): void

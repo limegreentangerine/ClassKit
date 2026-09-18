@@ -36,8 +36,8 @@
 		}
 	},
 	"scripts": {
-		"test": "phpunit",
-		"test-coverage": "phpunit --coverage-text",
+		"test": "php -d error_reporting='E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED' vendor/bin/phpunit",
+		"test-coverage": "php -d error_reporting='E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED' vendor/bin/phpunit --coverage-text",
 		"format:php": "php-cs-fixer fix",
 		"format:php:check": "php-cs-fixer check --diff",
 		"format:js": "npx prettier --write .",
