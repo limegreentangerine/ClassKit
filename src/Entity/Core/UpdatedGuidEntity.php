@@ -2,7 +2,7 @@
 
 namespace ClassKit\Entity\Core;
 
-use ClassKit\Entity\Core\BaseEntity;
+use ClassKit\Entity\Core\GuidEntity;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  */
-abstract class UpdatedEntity extends BaseEntity
+abstract class UpdatedEntity extends GuidEntity
 {
     /**
      * @ORM\Column(type="datetime")
