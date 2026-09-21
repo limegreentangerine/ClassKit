@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  */
-abstract class UpdatedEntity extends GuidEntity
+abstract class UpdatedGuidEntity extends GuidEntity
 {
     /**
      * @ORM\Column(type="datetime")
