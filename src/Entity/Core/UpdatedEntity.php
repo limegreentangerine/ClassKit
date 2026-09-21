@@ -50,6 +50,14 @@ abstract class UpdatedEntity extends BaseEntity
         $this->setDateUpdated(new DateTimeImmutable());
     }
     /**
+     * Executes setDateCreated.
+     */
+    public function setDateCreated(DateTimeImmutable $value): void
+    {
+        $this->date_created = $value;
+    }
+
+    /**
      * Executes getDateCreated.
      */
     public function getDateCreated(): DateTimeImmutable

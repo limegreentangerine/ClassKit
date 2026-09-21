@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  */
-abstract class UpdatedEntity extends GuidEntity
+abstract class UpdatedGuidEntity extends GuidEntity
 {
     /**
      * @ORM\Column(type="datetime")
@@ -49,6 +49,14 @@ abstract class UpdatedEntity extends GuidEntity
     {
         $this->setDateUpdated(new DateTimeImmutable());
     }
+    /**
+     * Executes setDateCreated.
+     */
+    public function setDateCreated(DateTimeImmutable $value): void
+    {
+        $this->date_created = $value;
+    }
+
     /**
      * Executes getDateCreated.
      */
