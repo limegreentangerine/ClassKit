@@ -296,7 +296,7 @@ abstract class PackageController extends Package implements PackageInterface
         $event = new PackageInstallEvent();
         $event->setPackage($pkg);
         $event->setInstallType(__FUNCTION__);
-        Events::dispatch('package_installation_event', $pkg);
+        Events::dispatch('package_installation_event', $event);
     }
 
     /**
@@ -326,7 +326,7 @@ abstract class PackageController extends Package implements PackageInterface
         $event = new PackageInstallEvent();
         $event->setPackage($pkg);
         $event->setInstallType(__FUNCTION__);
-        Events::dispatch('package_installation_event', $pkg);
+        Events::dispatch('package_installation_event', $event);
     }
 
     /**
@@ -338,7 +338,7 @@ abstract class PackageController extends Package implements PackageInterface
             $this->installingOrUpdating = false;
             $pkg = $event->getPackage();
             $type = $event->getInstallType();
-            Log::addInfo(t('Package Event: %s - %s', $pkg->getPackageName(), $type));
+            Log::addInfo(sprintf('Package Event: %s - %s', $pkg->getPackageName(), $type));
         });
     }
 }
