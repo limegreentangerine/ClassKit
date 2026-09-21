@@ -3,8 +3,10 @@
 namespace ClassKit\Tests;
 
 use PHPUnit\Framework\TestCase;
+use DateTimeImmutable;
 use ClassKit\Api\Enum\ResponseType;
 use ClassKit\Api\Enum\RequestMethod;
+use ClassKit\Entity\Core\UpdatedGuidEntity;
 use ClassKit\Page\AjaxPage\AjaxPageConfig;
 use ClassKit\Page\AjaxPage\AjaxPageRequest;
 use ClassKit\Page\AjaxPage\Enums\SortOrder;
@@ -75,6 +77,27 @@ final class ClassKitPackageTest extends TestCase
             'perPage' => null,
             'sortOrder' => null,
         ], $request->toArray());
+    }
+
+    public function testUpdatedGuidEntityAllowsSettingCreatedAndUpdatedDates(): void
+    {
+        $entity = new class extends UpdatedGuidEntity {
+            public function __construct()
+            {
+                parent::__construct();
+            }
+        };
+
+        $created = new DateTimeImmutable('2024-01-01 12:00:00');
+        $updated = new DateTimeImmutable('2024-01-02 12:00:00');
+
+        $entity->setDateCreated($created);
+        $entity->setDateUpdated($updated);
+
+        $this->assertSame($created, $entity->getDateCreated());
+        $this->assertSame($updated, $entity->getDateUpdated());
+        $this->assertSame('01/01/2024 12:00', $entity->getDateCreatedString());
+        $this->assertSame('02/01/2024 12:00', $entity->getDateUpdatedString());
     }
 
     public function testAjaxPageRequestRejectsUnknownSortOrder(): void
