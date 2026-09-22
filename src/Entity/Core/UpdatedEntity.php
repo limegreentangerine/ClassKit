@@ -19,12 +19,12 @@ use Doctrine\ORM\Mapping as ORM;
 abstract class UpdatedEntity extends BaseEntity
 {
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     protected DateTimeImmutable $date_created;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     protected DateTimeImmutable $date_updated;
 
