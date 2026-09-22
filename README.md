@@ -2,19 +2,29 @@
 
 [![Tests](https://github.com/limegreentangerine/ClassKit/actions/workflows/Tests.yml/badge.svg)](https://github.com/limegreentangerine/ClassKit/actions/workflows/Tests.yml)
 
-ClassKit is a shared utility package for Limegreentangerine projects that build on Concrete CMS and concrete5 package infrastructure. It brings together common helper classes, package lifecycle abstractions, and extension patterns that reduce boilerplate across LGT projects.
+ClassKit is a curated helper library for Concrete CMS package development. It centralizes the repetitive work that shows up across Limegreentangerine projects: package setup, page listing patterns, localized content helpers, API access, environment checks, file imports, and lightweight entity/search utilities.
 
 ## Overview
 
-This package is intended for internal use in Concrete CMS package development. It includes reusable functionality for package registration, page and search utilities, file import helpers, environment checks, logging, and simple API client wrappers.
+ClassKit is designed to be consumed by Concrete CMS packages instead of being a standalone application. The goal is to keep common package logic in one place while keeping the surface area small and easy to extend.
 
-The goal is to keep common logic in one place while staying lightweight and easy to extend.
+The library helps with:
+
+- package lifecycle management and installation hooks
+- common Concrete CMS package traits for attributes, blocks, themes, pages, and storage
+- page and AJAX-page helpers for list rendering and pagination
+- localization and global-area helpers for multilingual builds
+- environment-aware configuration checks
+- cached search flows and reusable result helpers
+- API request wrappers and response handling
+- remote file import utilities and logging patterns
+- simple Doctrine-style entity base classes
 
 ## Requirements
 
 - PHP 8.4+
-- Concrete CMS 9.5+
-- Composer
+- Concrete CMS 9.2+
+- Composer 2.x
 
 ## Installation
 
@@ -24,24 +34,49 @@ Install the package via Composer:
 composer require limegreentangerine/class_kit
 ```
 
-If this is being used as part of a local package workspace, make sure Composer autoloading is enabled and the package is installed in the Concrete CMS environment where the parent package is loaded.
+When working in a local package workspace, make sure Composer autoloading is enabled in the Concrete CMS environment where the consuming package is loaded.
+
+## Quick start
+
+Use the base package controller as the foundation for your package:
+
+```php
+use ClassKit\Package\PackageController;
+use ClassKit\Package\Traits\AttributeTrait;
+use ClassKit\Package\Traits\PageTrait;
+use ClassKit\Package\Traits\ThemeTrait;
+
+class MyPackageController extends PackageController
+{
+    use AttributeTrait;
+    use PageTrait;
+    use ThemeTrait;
+
+    protected $pkgHandle = 'my_package';
+    protected $pkgVersion = '1.0.0';
+}
+```
+
+This gives you a consistent package bootstrap with common install hooks, service registration, and reusable setup helpers.
 
 ## Included helpers
 
-The package currently includes the following functionality:
+ClassKit currently includes the following capabilities:
 
-- Page and page-list extensions for common attribute and topic filtering use cases
+- Page and page-list extensions for attribute-topic filtering and search use cases
 - Global area localization for multilingual page layouts
-- Shared package controller and package interface patterns
-- Environment checks for local, staging, and production mode
-- Cached search helper for page and content lookup flows
-- File import utility for bringing remote images into the Concrete file manager
-- API request wrapper for JSON/XML service integrations
-- Logger abstraction and standard response handling
+- Shared package controller and package interface abstractions
+- Environment checks for local, staging, and production workflows
+- Cached search helper for content and page lookups
+- File import utilities for bringing remote images into the Concrete file manager
+- API request base classes for JSON/XML integrations
+- Logger abstraction and standard response wrappers
+- Base entity classes for simple Doctrine-backed models
+- AJAX page response helpers for paginated card-based content views
 
 ## Package traits
 
-The package includes a set of reusable traits in `src/Package/Traits` for common Concrete CMS package setup tasks. These are designed to be used inside package controllers or installer classes and cover the most repetitive package configuration work.
+The package includes reusable traits in `src/Package/Traits` for common Concrete CMS package setup tasks. These traits are intended for package controllers or installer classes that need consistent configuration and registration logic.
 
 Available traits:
 
@@ -60,7 +95,7 @@ use ClassKit\Package\Traits\AttributeTrait;
 use ClassKit\Package\Traits\PageTrait;
 use ClassKit\Package\Traits\ThemeTrait;
 
-class MyPackageController extends Package
+class MyPackageController extends PackageController
 {
     use AttributeTrait;
     use PageTrait;
@@ -68,16 +103,31 @@ class MyPackageController extends Package
 }
 ```
 
-These traits simplify the package installation and configuration flow while keeping logic in a reusable, predictable pattern.
+These traits simplify package installation and configuration while preserving a predictable pattern that is easy to reason about across multiple codebases.
 
 ## Package structure
 
 ```text
 src/
 ├── Api/
-│   └── ConnectionController.php
+│   ├── ConnectionController.php
+│   ├── Enum/
+│   │   ├── RequestMethod.php
+│   │   └── ResponseType.php
+│   ├── Interface/
+│   │   ├── ConnectionInterface.php
+│   │   └── ResponseInterface.php
+│   └── Response/
+│       ├── ErrorResponse.php
+│       └── Response.php
 ├── Area/
 │   └── GlobalArea.php
+├── Entity/
+│   └── Core/
+│       ├── BaseEntity.php
+│       ├── GuidEntity.php
+│       ├── UpdatedEntity.php
+│       └── UpdatedGuidEntity.php
 ├── Environment/
 │   └── Environment.php
 ├── File/
@@ -85,22 +135,38 @@ src/
 ├── Log/
 │   └── Logger.php
 ├── Package/
+│   ├── Events/
+│   │   └── PackageInstallEvent.php
+│   ├── Traits/
+│   │   ├── AttributeTrait.php
+│   │   ├── BlockTrait.php
+│   │   ├── ExpressTrait.php
+│   │   ├── FileTrait.php
+│   │   ├── PageTrait.php
+│   │   ├── StorageTrait.php
+│   │   └── ThemeTrait.php
 │   ├── PackageController.php
-│   ├── PackageInterface.php
-│   └── Traits/
-│       ├── AttributeTrait.php
-│       ├── BlockTrait.php
-│       ├── ExpressTrait.php
-│       ├── FileTrait.php
-│       ├── PageTrait.php
-│       ├── StorageTrait.php
-│       └── ThemeTrait.php
+│   └── PackageInterface.php
 ├── Page/
+│   ├── AjaxPage/
+│   │   ├── AjaxPage.php
+│   │   ├── AjaxPageConfig.php
+│   │   ├── AjaxPageRequest.php
+│   │   ├── AjaxPageResponse.php
+│   │   └── Enums/
+│   │       └── SortOrder.php
+│   ├── Theme/
+│   │   └── Theme.php
 │   ├── Page.php
 │   ├── PageList.php
 │   └── TranslationAdaptorTrait.php
 ├── Search/
 │   ├── CachedSearch.php
+│   ├── ItemList/
+│   │   └── ListTrait.php
+│   ├── Result/
+│   │   └── Item/
+│   │       └── ItemTrait.php
 │   └── Result.php
 controller.php
 ```
@@ -199,6 +265,24 @@ class MyPackageController
 }
 ```
 
+### Base entity pattern
+
+```php
+use ClassKit\Entity\Core\BaseEntity;
+
+class Product extends BaseEntity
+{
+    protected string $name;
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+}
+```
+
+This gives a consistent foundation for package entity classes that need standard ID lookups and Doctrine-friendly structure.
+
 ## Development
 
 Run the package test suite using Composer:
@@ -231,8 +315,8 @@ composer run format:js:check
 
 - This project is a shared helper package, not a standalone customer-facing application.
 - It is intended to be consumed by Concrete CMS packages that need a common base layer across multiple projects.
-- The package includes targeted aliases and conventions for standard Concrete CMS package workflows.
+- The package includes conventions and reusable abstractions for standard Concrete CMS package workflows.
 
 ## License
 
-Proprietary. See [LICENSE](LICENSE) for details.
+ClassKit is released under the MIT License. See [LICENSE.TXT](LICENSE.TXT) for details.
