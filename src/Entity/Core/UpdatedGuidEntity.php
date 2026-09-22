@@ -19,12 +19,12 @@ use Doctrine\ORM\Mapping as ORM;
 abstract class UpdatedGuidEntity extends GuidEntity
 {
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     protected DateTimeImmutable $date_created;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     protected DateTimeImmutable $date_updated;
 
