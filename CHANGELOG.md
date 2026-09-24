@@ -5,6 +5,12 @@ All notable changes to ClassKit are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2026-09-24
+
+### Changed
+
+- Updated the package icon.
+
 ## [1.0.3] - 2026-09-22
 
 ### Fixed
@@ -60,6 +66,7 @@ the project uses [Semantic Versioning](https://semver.org/).
   utilities.
 - Base entity and page/theme helper classes.
 
+[1.0.4]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.4
 [1.0.3]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.3
 [1.0.2]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.2
 [1.0.1]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.1
