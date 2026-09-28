@@ -2,12 +2,12 @@
 
 namespace ClassKit\Tests;
 
-use PHPUnit\Framework\TestCase;
 use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
 use ClassKit\Api\Enum\ResponseType;
 use ClassKit\Api\Enum\RequestMethod;
-use ClassKit\Entity\Core\UpdatedGuidEntity;
 use ClassKit\Page\AjaxPage\AjaxPageConfig;
+use ClassKit\Entity\Core\UpdatedGuidEntity;
 use ClassKit\Page\AjaxPage\AjaxPageRequest;
 use ClassKit\Page\AjaxPage\Enums\SortOrder;
 use ClassKit\Page\AjaxPage\AjaxPageResponse;

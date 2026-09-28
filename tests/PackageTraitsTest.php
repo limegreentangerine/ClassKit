@@ -49,6 +49,11 @@ namespace Concrete\Core\Attribute\Key {
         public array $options = [];
         public array $saved = [];
 
+        public function __construct(string $handle = '')
+        {
+            $this->handle = $handle;
+        }
+
         public static function getByHandle(string $handle): ?self
         {
             return self::$keys[$handle] ?? null;
@@ -63,11 +68,6 @@ namespace Concrete\Core\Attribute\Key {
             self::$keys[$info['akHandle']] = $key;
 
             return $key;
-        }
-
-        public function __construct(string $handle = '')
-        {
-            $this->handle = $handle;
         }
 
         public function getAttributeKeyID(): int
@@ -598,40 +598,17 @@ namespace {
 }
 
 namespace ClassKit\Tests {
-    use ClassKit\Package\Traits\AttributeTrait;
-    use ClassKit\Package\Traits\BlockTrait;
-    use ClassKit\Package\Traits\ExpressTrait;
+    use PHPUnit\Framework\TestCase;
     use ClassKit\Package\Traits\FileTrait;
     use ClassKit\Package\Traits\PageTrait;
-    use ClassKit\Package\Traits\StorageTrait;
+    use ClassKit\Package\Traits\BlockTrait;
     use ClassKit\Package\Traits\ThemeTrait;
-    use PHPUnit\Framework\TestCase;
+    use ClassKit\Package\Traits\ExpressTrait;
+    use ClassKit\Package\Traits\StorageTrait;
+    use ClassKit\Package\Traits\AttributeTrait;
 
     final class PackageTraitsTest extends TestCase
     {
-        protected function setUp(): void
-        {
-            \Concrete\Core\Attribute\Type::$types = [];
-            \Concrete\Core\Attribute\Set::$sets = [];
-            \Concrete\Core\Attribute\Key\Category::$categories = [
-                'collection' => new \Concrete\Core\Attribute\Key\Category(),
-            ];
-            \Concrete\Core\Attribute\Key\Category::$sets = [];
-            \Concrete\Core\Attribute\Key\CollectionKey::$keys = [];
-            \Concrete\Core\Block\BlockType\Set::$sets = [];
-            \Concrete\Core\File\Set\Set::$sets = [];
-            \Concrete\Core\Support\Facade\Express::$objects = [];
-            \Concrete\Core\File\StorageLocation\Type\Type::$created = [];
-            \Concrete\Core\File\StorageLocation\Type\Type::$current = null;
-            \PageTheme::$themes = [];
-            \PageType::$types = [];
-            \PageType::$updated = [];
-            \PageTemplate::$templates = [];
-            \SinglePage::$pages = [];
-            \Page::$pagesById = [];
-            \Page::$pagesByPath = [];
-        }
-
         public function testAttributeTraitAddAttributeTypeAndSet(): void
         {
             $subject = new class {
@@ -821,6 +798,28 @@ namespace ClassKit\Tests {
             $this->assertInstanceOf(\Concrete\Core\Entity\File\StorageLocation\Type\Type::class, $first);
             $this->assertSame($first, $second);
             $this->assertCount(1, \Concrete\Core\File\StorageLocation\Type\Type::$created);
+        }
+        protected function setUp(): void
+        {
+            \Concrete\Core\Attribute\Type::$types = [];
+            \Concrete\Core\Attribute\Set::$sets = [];
+            \Concrete\Core\Attribute\Key\Category::$categories = [
+                'collection' => new \Concrete\Core\Attribute\Key\Category(),
+            ];
+            \Concrete\Core\Attribute\Key\Category::$sets = [];
+            \Concrete\Core\Attribute\Key\CollectionKey::$keys = [];
+            \Concrete\Core\Block\BlockType\Set::$sets = [];
+            \Concrete\Core\File\Set\Set::$sets = [];
+            \Concrete\Core\Support\Facade\Express::$objects = [];
+            \Concrete\Core\File\StorageLocation\Type\Type::$created = [];
+            \Concrete\Core\File\StorageLocation\Type\Type::$current = null;
+            \PageTheme::$themes = [];
+            \PageType::$types = [];
+            \PageType::$updated = [];
+            \PageTemplate::$templates = [];
+            \SinglePage::$pages = [];
+            \Page::$pagesById = [];
+            \Page::$pagesByPath = [];
         }
     }
 }

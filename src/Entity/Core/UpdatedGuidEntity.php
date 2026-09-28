@@ -2,7 +2,6 @@
 
 namespace ClassKit\Entity\Core;
 
-use ClassKit\Entity\Core\GuidEntity;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
