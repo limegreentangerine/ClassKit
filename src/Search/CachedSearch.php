@@ -20,7 +20,7 @@ class CachedSearch
     /**
      * Executes __construct.
      */
-    public function __construct(object $loggerClass, string $indexKey = 'search_results', int $ttl = 3600)
+    public function __construct(string $loggerClass, string $indexKey = 'search_results', int $ttl = 3600)
     {
         $this->app = \Concrete\Core\Support\Facade\Application::getFacadeApplication();
         $this->cache = $this->app->make(\Concrete\Core\Cache\Level\ExpensiveCache::class)->getPool();
@@ -31,6 +31,10 @@ class CachedSearch
 
     /**
      * Executes storeCacheKey.
+     *
+     * The index is updated with a read-modify-write, so two requests saving
+     * at the same moment can drop a key from it. That key is not lost from the
+     * cache, but clearAll() will not remove it until it expires on its own.
      */
     protected function storeCacheKey(string $cacheKey): void
     {
@@ -46,12 +50,22 @@ class CachedSearch
     }
 
     /**
-     * Executes getCacheKey.
+     * Executes getSearchUrl.
      */
-    protected function getCacheKey(string $searchUrl, array $filters): string
+    protected function getSearchUrl(string $searchUrl, array $filters): string
     {
         $uh = $this->app->make('helper/url');
         return $uh->buildQuery($searchUrl, $filters);
+    }
+
+    /**
+     * Executes getCacheKey.
+     *
+     * Hashed because Stash treats "/" in a key as a namespace separator.
+     */
+    protected function getCacheKey(string $searchUrl): string
+    {
+        return 'search_' . md5($searchUrl);
     }
 
     /**
@@ -69,20 +83,23 @@ class CachedSearch
     /**
      * Executes search.
      */
-    public function search(object $searchClass, string $searchUrl = '', array $filters = [], ?callable $queryBuilder = null)
+    public function search(string $searchClass, string $searchUrl = '', array $filters = [], ?callable $queryBuilder = null)
     {
-        $cacheKey = $this->getCacheKey($searchUrl, $filters);
+        $query = $this->getSearchUrl($searchUrl, $filters);
+        $cacheKey = $this->getCacheKey($query);
 
         // Try cache
         $cachedItem = $this->cache->getItem($cacheKey);
         if ($cachedItem->isHit()) {
-            $this->saveQuery($cacheKey, count($cachedItem->get()));
+            $this->saveQuery($query, count($cachedItem->get()));
             return $cachedItem->get();
         }
 
         // Build and run query
         $pl = $this->app->make($searchClass);
-        $queryBuilder($pl); // apply filters from controller
+        if ($queryBuilder) {
+            $queryBuilder($pl); // apply filters from controller
+        }
         $ids = $pl->getResultIDs(); // only fetch IDs
 
         // Save to cache
@@ -91,7 +108,7 @@ class CachedSearch
 
         // Save key to index
         $this->storeCacheKey($cacheKey);
-        $this->saveQuery($cacheKey, count($ids));
+        $this->saveQuery($query, count($ids));
 
         return $ids;
     }
