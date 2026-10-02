@@ -333,7 +333,7 @@ trait PageTrait
      *
      * @return object PageTemplate
      */
-    protected function addPageTemplate(string $handle, string $name, Package $pkg, string $icon = 'landing.png'): PageTemplate
+    protected function addPageTemplate(string $handle, string $name, Package $pkg, string $icon = 'landing.png'): \Concrete\Core\Entity\Page\Template
     {
         $template = PageTemplate::getByHandle($handle);
         if (!is_object($template)) {

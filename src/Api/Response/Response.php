@@ -44,7 +44,7 @@ class Response extends CoreResponse implements ResponseInterface
     /**
      * @param mixed $data
      */
-    protected static function createXmlResponse(mixed $data, int $status, array $headers): self
+    protected static function createXmlResponse(mixed $data, int $status, array $headers): static
     {
         if (null !== $data && !is_string($data)) {
             throw new InvalidArgumentException('XML response data must be a string or null.');
@@ -53,24 +53,24 @@ class Response extends CoreResponse implements ResponseInterface
         $responseHeaders = $headers;
         $responseHeaders['Content-Type'] ??= 'text/xml';
 
-        return new self($data ?? '', $status, $responseHeaders);
+        return new static($data ?? '', $status, $responseHeaders);
     }
 
     /**
-     * Create Response from chosen type
+     * Create Response from chosen type, as an instance of the called class
      *
      * @param ResponseType $type
      * @param mixed        $data
      * @param int          $status
      * @param array        $headers
      *
-     * @return self
+     * @return static
      */
-    public static function fromType(ResponseType $type, mixed $data = [], int $status = 200, array $headers = []): self
+    public static function fromType(ResponseType $type, mixed $data = [], int $status = 200, array $headers = []): static
     {
         return match ($type) {
-            ResponseType::JSON => new self($data, $status, $headers),
-            ResponseType::XML => self::createXmlResponse($data, $status, $headers),
+            ResponseType::JSON => new static($data, $status, $headers),
+            ResponseType::XML => static::createXmlResponse($data, $status, $headers),
         };
     }
 
