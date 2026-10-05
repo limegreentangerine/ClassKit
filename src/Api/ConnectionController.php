@@ -10,6 +10,7 @@ use ClassKit\Api\Response\Response;
 use ClassKit\Api\Enum\RequestMethod;
 use GuzzleHttp\Client as HttpClient;
 use ClassKit\Api\Response\ErrorResponse;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use ClassKit\Api\Interface\ConnectionInterface;
 
@@ -18,6 +19,11 @@ use ClassKit\Api\Interface\ConnectionInterface;
  */
 abstract class ConnectionController implements ConnectionInterface
 {
+    /**
+     * cURL error number for an operation timeout (CURLE_OPERATION_TIMEDOUT).
+     */
+    private const CURL_TIMEOUT_ERRNO = 28;
+
     /**
      * @var HttpClient
      */
@@ -37,6 +43,20 @@ abstract class ConnectionController implements ConnectionInterface
      * @var ResponseType
      */
     protected ResponseType $format;
+
+    /**
+     * Seconds to wait for a response. Subclasses can override for slow endpoints.
+     *
+     * @var int
+     */
+    protected int $timeout = 10;
+
+    /**
+     * Seconds to wait while connecting. Subclasses can override.
+     *
+     * @var int
+     */
+    protected int $connectTimeout = 5;
 
     /**
      * @var string       $baseUrl
@@ -107,6 +127,20 @@ abstract class ConnectionController implements ConnectionInterface
                 $xml->addChild((string) $key, htmlspecialchars((string) $value));
             }
         }
+    }
+
+    /**
+     * Build an error body for the connection's format.
+     *
+     * XML responses need a string body; JSON responses take an array.
+     */
+    protected function buildErrorBody(string $message): array|string
+    {
+        if ($this->format === ResponseType::XML) {
+            return '<error><message>' . htmlspecialchars($message, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</message></error>';
+        }
+
+        return ['message' => $message];
     }
 
     /**
@@ -196,12 +230,10 @@ abstract class ConnectionController implements ConnectionInterface
         if (!RequestMethod::tryFrom(strtoupper($method))) {
             return ErrorResponse::fromType(
                 $this->format,
-                [
-                    'message' => t('Invalid request method: %s', $method),
-                ],
+                $this->buildErrorBody(t('Invalid request method: %s', $method)),
                 Response::HTTP_BAD_REQUEST,
                 $requestHeaders,
-            );
+            )->setUrl($url);
         }
 
         try {
@@ -209,10 +241,11 @@ abstract class ConnectionController implements ConnectionInterface
                 'debug' => false,
                 'headers' => $requestHeaders,
                 'idn_conversion' => false,
-                'connect_timeout' => 5,
-                'timeout' => 10,
+                'connect_timeout' => $this->connectTimeout,
+                'timeout' => $this->timeout,
+                // Follows redirects, so the response reports the URL that answered.
                 'on_stats' => function (TransferStats $stats) use (&$url) {
-                    $url = $stats->getEffectiveUri();
+                    $url = (string) $stats->getEffectiveUri();
                 },
             ];
 
@@ -230,21 +263,28 @@ abstract class ConnectionController implements ConnectionInterface
                 $this->format === ResponseType::JSON ? json_decode($responseBody, true) ?? $responseBody : $responseBody,
                 $res->getStatusCode(),
                 $responseHeaders,
-            );
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
-            $statusCode = $response ? $response->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
+            )->setUrl($url);
+        } catch (GuzzleException $e) {
+            $response = $e instanceof RequestException ? $e->getResponse() : null;
             $errorHeaders = $response ? $response->getHeaders() : [];
-            $errorBody = $response ? (string) $response->getBody() : [
-                'message' => t('Request failed: %s', $e->getMessage()),
-            ];
+
+            if ($response) {
+                $statusCode = $response->getStatusCode();
+                $errorBody = (string) $response->getBody();
+            } else {
+                $errno = method_exists($e, 'getHandlerContext') ? ($e->getHandlerContext()['errno'] ?? null) : null;
+                $statusCode = $errno === self::CURL_TIMEOUT_ERRNO
+                    ? Response::HTTP_GATEWAY_TIMEOUT
+                    : Response::HTTP_INTERNAL_SERVER_ERROR;
+                $errorBody = $this->buildErrorBody(t('Request failed: %s', $e->getMessage()));
+            }
 
             if ($this->format === ResponseType::JSON && is_string($errorBody)) {
                 $decodedBody = json_decode($errorBody, true);
                 $errorBody = $decodedBody ?? ['message' => $errorBody];
             }
 
-            return ErrorResponse::fromType($this->format, $errorBody, $statusCode, $errorHeaders);
+            return ErrorResponse::fromType($this->format, $errorBody, $statusCode, $errorHeaders)->setUrl($url);
         }
     }
 }
