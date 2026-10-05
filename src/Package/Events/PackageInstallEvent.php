@@ -13,10 +13,20 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class PackageInstallEvent extends GenericEvent
 {
     /**
+     * @var Package|null
+     */
+    protected $package;
+
+    /**
      * Executes getPackage.
      */
     public function getPackage(): ?Package
     {
+        // On uninstall the DB row is already removed, so prefer the entity captured in setPackage().
+        if ($this->package !== null) {
+            return $this->package;
+        }
+
         $handle = $this->getArgument('package');
         $pkg = Core::make(PackageService::class)->getByHandle($handle);
         return $pkg ?? null;
@@ -27,6 +37,7 @@ class PackageInstallEvent extends GenericEvent
      */
     public function setPackage(Package $pkg): void
     {
+        $this->package = $pkg;
         $this->setArgument('package', $pkg->getPackageHandle());
     }
 

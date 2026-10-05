@@ -396,11 +396,6 @@ namespace Concrete\Core\File\StorageLocation\Type {
 namespace {
     const COLLECTION_NOT_FOUND = 'collection_not_found';
 
-    function t(string $value): string
-    {
-        return $value;
-    }
-
     class BlockType
     {
         public static array $types = [];
