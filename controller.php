@@ -22,7 +22,7 @@ class Controller extends Package
      *
      * @var string
      */
-    protected $pkgVersion = '1.0.6';
+    protected $pkgVersion = '1.0.7';
 
     /**
      * The minimum Concrete version compatible with the package.
@@ -49,7 +49,6 @@ class Controller extends Package
      * @var array
      */
     protected $aliases = [
-        'GlobalArea' => \ClassKit\Area\GlobalArea::class,
         'PageList' => \ClassKit\Page\PageList::class,
         'Theme' => \ClassKit\Page\Theme\Theme::class,
     ];
