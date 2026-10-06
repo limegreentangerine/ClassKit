@@ -1,5 +1,11 @@
 <?php
 
+namespace {
+    if (!defined('FILENAME_PAGE_TEMPLATE_DEFAULT_ICON')) {
+        define('FILENAME_PAGE_TEMPLATE_DEFAULT_ICON', 'full.png');
+    }
+}
+
 namespace Concrete\Core\Attribute\Key {
     class Category
     {
@@ -550,9 +556,13 @@ namespace {
         }
     }
 
-    class PageTemplate
+    class PageTemplate extends \Concrete\Core\Entity\Page\Template
     {
         public static array $templates = [];
+        public string $handle = '';
+        public string $name = '';
+        public string $icon = '';
+        public $pkg = null;
 
         public static function getByHandle(string $handle): ?self
         {

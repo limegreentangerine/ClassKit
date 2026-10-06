@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/limegreentangerine/ClassKit/actions/workflows/Tests.yml/badge.svg)](https://github.com/limegreentangerine/ClassKit/actions/workflows/Tests.yml)
 
-ClassKit is a curated helper library for Concrete CMS package development. It centralizes the repetitive work that shows up across Limegreentangerine projects: package setup, page listing patterns, localized content helpers, API access, environment checks, file imports, and lightweight entity/search utilities.
+ClassKit is a curated helper library for Concrete CMS package development. It centralizes the repetitive work that shows up across Limegreentangerine projects: package setup, page listing patterns, translation-adaptor support, API access, environment checks, file imports, and lightweight entity/search utilities.
 
 ## Overview
 
@@ -13,7 +13,7 @@ The library helps with:
 - package lifecycle management and installation hooks
 - common Concrete CMS package traits for attributes, blocks, themes, pages, and storage
 - page and AJAX-page helpers for list rendering and pagination
-- localization and global-area helpers for multilingual builds
+- translation-adaptor support for AJAX-powered multilingual page flows
 - environment-aware configuration checks
 - cached search flows and reusable result helpers
 - API request wrappers and response handling
@@ -64,7 +64,7 @@ This gives you a consistent package bootstrap with common install hooks, service
 ClassKit currently includes the following capabilities:
 
 - Page and page-list extensions for attribute-topic filtering and search use cases
-- Global area localization for multilingual page layouts
+- Translation-adaptor support for AJAX-powered multilingual page flows
 - Shared package controller and package interface abstractions
 - Environment checks for local, staging, and production workflows
 - Cached search helper for content and page lookups
@@ -120,8 +120,6 @@ src/
 │   └── Response/
 │       ├── ErrorResponse.php
 │       └── Response.php
-├── Area/
-│   └── GlobalArea.php
 ├── Entity/
 │   └── Core/
 │       ├── BaseEntity.php
@@ -186,16 +184,6 @@ if (Environment::isProduction()) {
     // Production-only setup
 }
 ```
-
-### Localized global area
-
-```php
-use ClassKit\Area\GlobalArea;
-
-$area = new GlobalArea('Header');
-```
-
-This helps produce locale-aware area handles for multilingual pages.
 
 ### Page list filtering
 

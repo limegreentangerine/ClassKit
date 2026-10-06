@@ -5,6 +5,12 @@ All notable changes to ClassKit are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.0.7] - 2026-10-06
+
+### Removed
+
+- Removed `ClassKit\Area\GlobalArea` and its `GlobalArea` package alias.
+
 ## [1.0.6] - 2026-09-30
 
 ### Fixed
@@ -96,6 +102,9 @@ the project uses [Semantic Versioning](https://semver.org/).
   utilities.
 - Base entity and page/theme helper classes.
 
+[1.0.7]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.7
+[1.0.6]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.6
+[1.0.5]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.5
 [1.0.4]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.4
 [1.0.3]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.3
 [1.0.2]: https://github.com/limegreentangerine/ClassKit/releases/tag/1.0.2
