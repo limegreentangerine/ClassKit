@@ -28,7 +28,7 @@ class Environment
      */
     public static function isLocal(): bool
     {
-        return self::$config->get('concrete.security.production.mode') === Modes::MODE_DEVELOPMENT;
+        return static::$config->get('concrete.security.production.mode') === Modes::MODE_DEVELOPMENT;
     }
 
     /**
@@ -38,7 +38,7 @@ class Environment
      */
     public static function isStaging(): bool
     {
-        return self::$config->get('concrete.security.production.mode') === Modes::MODE_STAGING;
+        return static::$config->get('concrete.security.production.mode') === Modes::MODE_STAGING;
     }
 
     /**
@@ -48,6 +48,6 @@ class Environment
      */
     public static function isProduction(): bool
     {
-        return self::$config->get('concrete.security.production.mode') === Modes::MODE_PRODUCTION;
+        return static::$config->get('concrete.security.production.mode') === Modes::MODE_PRODUCTION;
     }
 }
