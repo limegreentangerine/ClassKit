@@ -4,21 +4,18 @@ namespace ClassKit\Environment;
 
 use Core;
 use Concrete\Core\Production\Modes;
-use Concrete\Core\Site\Config\Liaison;
 
 /**
  * Class Environment.
  */
 class Environment
 {
-    protected Liaison $config;
-
     /**
-     * Executes __construct.
+     * Returns the current production mode.
      */
-    public function __construct()
+    protected static function mode(): ?string
     {
-        $this->config = Core::make('config');
+        return Core::make('config')->get('concrete.security.production.mode');
     }
 
     /**
@@ -28,7 +25,7 @@ class Environment
      */
     public static function isLocal(): bool
     {
-        return static::$config->get('concrete.security.production.mode') === Modes::MODE_DEVELOPMENT;
+        return static::mode() === Modes::MODE_DEVELOPMENT;
     }
 
     /**
@@ -38,7 +35,7 @@ class Environment
      */
     public static function isStaging(): bool
     {
-        return static::$config->get('concrete.security.production.mode') === Modes::MODE_STAGING;
+        return static::mode() === Modes::MODE_STAGING;
     }
 
     /**
@@ -48,6 +45,6 @@ class Environment
      */
     public static function isProduction(): bool
     {
-        return static::$config->get('concrete.security.production.mode') === Modes::MODE_PRODUCTION;
+        return static::mode() === Modes::MODE_PRODUCTION;
     }
 }
