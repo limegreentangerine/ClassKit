@@ -22,6 +22,8 @@
 	},
 	"homepage": "https://github.com/limegreentangerine/class_kit#readme",
 	"devDependencies": {
-		"prettier": "^3.9.6"
+		"prettier": "^3.9.6",
+		"svelte": "^5.57.2",
+		"svelte-loader": "^3.2.4"
 	}
 }
