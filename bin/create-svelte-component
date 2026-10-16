@@ -19,7 +19,7 @@ $installPath = $rootPath . DIRECTORY_SEPARATOR  . 'public';
 if ($pkgHandle !== '') {
     $installPath = $installPath . DIRECTORY_SEPARATOR . 'packages' . DIRECTORY_SEPARATOR . $pkgHandle;
 } else {
-    $installPath = $installPath . DIRECTORY_SEPARATOR . 'applications';
+    $installPath = $installPath . DIRECTORY_SEPARATOR . 'application';
 }
 
 if (!file_exists($installPath)) {
