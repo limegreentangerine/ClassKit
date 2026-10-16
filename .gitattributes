@@ -2,5 +2,9 @@
 /tests export-ignore
 /.gitattributes export-ignore
 /.gitignore export-ignore
+/.prettierignore export-ignore
+/.prettierrc export-ignore
+/package-lock.json export-ignore
+/package.json export-ignore
 /.php-cs-fixer.dist.php export-ignore
 /phpunit.xml.dist export-ignore

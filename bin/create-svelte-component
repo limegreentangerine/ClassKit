@@ -88,6 +88,17 @@ foreach ($templateIterator as $item) {
     }
 }
 
-echo "TODO: create/edit svelte-components.json file" . PHP_EOL;
+$svelteComponentFile = './svelte-components.json';
+$componentList = file_get_contents($svelteComponentFile);
+if ($componentList) {
+    $componentListArr = json_decode($componentList, true, JSON_THROW_ON_ERROR);
+    if (!in_array($installPath, $componentListArr)) {
+        $componentListArr[] = $installPath;
+
+        if (!file_put_contents($svelteComponentFile, json_encode($componentListArr))) {
+            fwrite(STDERR, "Unable to edit: {$svelteComponentFile}\n");
+        }
+    }
+}
 
 echo "Component {$componentName} ({$componentHandle}) created at {$installPath}" . PHP_EOL;
