@@ -1,0 +1,93 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+echo "Create Svelte component..." . PHP_EOL;
+
+do {
+    echo "Package Handle \033[1m[none]\033[0m: ";
+    $pkgHandle = trim((string) fgets(STDIN));
+    $isValidName = $pkgHandle === '' || preg_match('/^[A-Za-z0-9_-]+$/', $pkgHandle) === 1;
+    if (!$isValidName) {
+        echo "Use only letters, numbers, hyphens and underscores." . PHP_EOL;
+    }
+} while (!$isValidName);
+
+$installPath = '.' . DIRECTORY_SEPARATOR  . 'public';
+if ($pkgHandle !== '') {
+    $installPath = $installPath . DIRECTORY_SEPARATOR . 'packages' . DIRECTORY_SEPARATOR . $pkgHandle;
+} else {
+    $installPath = $installPath . DIRECTORY_SEPARATOR . 'applications';
+}
+
+if (!file_exists($installPath)) {
+    fwrite(STDERR, "Folder \033[1m{$installPath}\033[0m doesn't exist or not running from root folder\n");
+    exit(1);
+}
+
+do {
+    echo "Path relative to \033[1m[" . $installPath . "]\033[0m: ";
+    $createPath = trim((string) fgets(STDIN));
+    $isValidName = preg_match('~^[A-Za-z0-9_/]+$~', $createPath) === 1;
+    if (!$isValidName) {
+        echo "Use only letters, numbers, underscores and forward slashes." . PHP_EOL;
+    }
+} while (!$isValidName);
+
+$trimmedCreatePath = trim($createPath, '/');
+$installPath = $installPath . DIRECTORY_SEPARATOR . $trimmedCreatePath;
+
+$createPathArr = explode('/', $trimmedCreatePath);
+if ($createPathArr[0] !== 'blocks') {
+    $installPath = $installPath . DIRECTORY_SEPARATOR . 'view';
+}
+
+if (file_exists($installPath)) {
+    fwrite(STDERR, "Component Exists at \033[1m{$installPath}\033[0m\n");
+    exit(1);
+}
+
+if (!is_dir($installPath) && !mkdir($installPath, 0755, true)) {
+    fwrite(STDERR, "Unable to create: {$installPath}\n");
+    exit(1);
+}
+
+$componentHandle = str_replace(['-', '_'], '-', end($createPathArr));
+$componentName = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $componentHandle)));
+
+$componentTemplateFolder = './resources/_component';
+$templateIterator = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($componentTemplateFolder, FilesystemIterator::SKIP_DOTS),
+    RecursiveIteratorIterator::SELF_FIRST
+);
+
+$placeholders = [
+    '{{COMPONENT_NAME}}' => $componentName,
+    '{{COMPONENT_HANDLE}}' => $componentHandle,
+];
+
+foreach ($templateIterator as $item) {
+    $relativePath = strtr(substr($item->getPathname(), strlen($componentTemplateFolder) + 1), $placeholders);
+    $destination = $installPath . DIRECTORY_SEPARATOR . $relativePath;
+
+    if ($item->isDir()) {
+        if (!is_dir($destination) && !mkdir($destination, 0755, true)) {
+            fwrite(STDERR, "Unable to create: {$relativePath}\n");
+            exit(1);
+        }
+    } elseif (file_exists($destination)) {
+        echo "{$relativePath} exists -- (ignored)\n";
+        continue;
+    } elseif (
+        ($contents = file_get_contents($item->getPathname())) === false
+        || file_put_contents($destination, strtr($contents, $placeholders)) === false
+    ) {
+        fwrite(STDERR, "Unable to copy: {$relativePath}\n");
+        exit(1);
+    }
+}
+
+echo "TODO: create/edit svelte-components.json file" . PHP_EOL;
+
+echo "Component {$componentName} ({$componentHandle}) created at {$installPath}" . PHP_EOL;

@@ -49,15 +49,9 @@
 		"format:check": [
 			"@format:php:check",
 			"@format:js:check"
-		],
-		"post-package-install": [
-			"@php ./vendor/bin/install-classkit-resources"
-		],
-		"post-update-cmd": [
-			"@php ./vendor/bin/install-classkit-resources"
 		]
 	},
 	"bin": [
-		"bin/install-classkit-resources"
+		"bin/create-svelte-component"
 	]
 }
