@@ -56,7 +56,7 @@ if (!is_dir($installPath) && !mkdir($installPath, 0755, true)) {
 $componentHandle = str_replace(['-', '_'], '-', end($createPathArr));
 $componentName = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $componentHandle)));
 
-$componentTemplateFolder = './packages/class_kit/resources/_component';
+$componentTemplateFolder = './public/packages/class_kit/resources/_component';
 $templateIterator = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($componentTemplateFolder, FilesystemIterator::SKIP_DOTS),
     RecursiveIteratorIterator::SELF_FIRST
