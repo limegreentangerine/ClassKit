@@ -15,9 +15,7 @@ do {
 } while (!$isValidName);
 
 $rootPath = getcwd();
-echo "ROOT PATH: {$rootPath}" . PHP_EOL;
-
-$installPath = '.' . DIRECTORY_SEPARATOR  . 'public';
+$installPath = $rootPath . DIRECTORY_SEPARATOR  . 'public';
 if ($pkgHandle !== '') {
     $installPath = $installPath . DIRECTORY_SEPARATOR . 'packages' . DIRECTORY_SEPARATOR . $pkgHandle;
 } else {
@@ -25,7 +23,8 @@ if ($pkgHandle !== '') {
 }
 
 if (!file_exists($installPath)) {
-    fwrite(STDERR, "Folder \033[1m{$installPath}\033[0m doesn't exist or not running from root folder\n");
+    $feedbackPath = str_replace($rootPath, '.', $installPath);
+    fwrite(STDERR, "Folder \033[1m{$feedbackPath}\033[0m doesn't exist or not running from root folder\n");
     exit(1);
 }
 
@@ -47,19 +46,21 @@ if ($createPathArr[0] !== 'blocks') {
 }
 
 if (file_exists($installPath)) {
-    fwrite(STDERR, "Component Exists at \033[1m{$installPath}\033[0m\n");
+    $feedbackPath = str_replace($rootPath, '.', $installPath);
+    fwrite(STDERR, "Component Exists at \033[1m{$feedbackPath}\033[0m\n");
     exit(1);
 }
 
 if (!is_dir($installPath) && !mkdir($installPath, 0755, true)) {
-    fwrite(STDERR, "Unable to create: {$installPath}\n");
+    $feedbackPath = str_replace($rootPath, '.', $installPath);
+    fwrite(STDERR, "Unable to create: {$feedbackPath}\n");
     exit(1);
 }
 
 $componentHandle = str_replace(['-', '_'], '-', end($createPathArr));
 $componentName = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $componentHandle)));
 
-$componentTemplateFolder = './resources/_component';
+$componentTemplateFolder = $rootPath . DIRECTORY_SEPARATOR . 'resources/_component';
 $templateIterator = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($componentTemplateFolder, FilesystemIterator::SKIP_DOTS),
     RecursiveIteratorIterator::SELF_FIRST
@@ -76,21 +77,25 @@ foreach ($templateIterator as $item) {
 
     if ($item->isDir()) {
         if (!is_dir($destination) && !mkdir($destination, 0755, true)) {
-            fwrite(STDERR, "Unable to create: {$relativePath}\n");
+            $feedbackPath = str_replace($rootPath, '.', $relativePath);
+            fwrite(STDERR, "Unable to create: {$feedbackPath}\n");
             exit(1);
         }
     } elseif (file_exists($destination)) {
-        echo "{$relativePath} exists -- (ignored)\n";
+        $feedbackPath = str_replace($rootPath, '.', $relativePath);
+        echo "{$feedbackPath} exists -- (ignored)\n";
         continue;
     } elseif (
         ($contents = file_get_contents($item->getPathname())) === false
         || file_put_contents($destination, strtr($contents, $placeholders)) === false
     ) {
-        fwrite(STDERR, "Unable to copy: {$relativePath}\n");
+        $feedbackPath = str_replace($rootPath, '.', $relativePath);
+        fwrite(STDERR, "Unable to copy: {$feedbackPath}\n");
         exit(1);
     }
 }
 
 echo "TODO: create/edit svelte-components.json file" . PHP_EOL;
 
-echo "Component {$componentName} ({$componentHandle}) created at {$installPath}" . PHP_EOL;
+$feedbackPath = str_replace($rootPath, '.', $installPath);
+echo "Component {$componentName} ({$componentHandle}) created at {$feedbackPath}" . PHP_EOL;
