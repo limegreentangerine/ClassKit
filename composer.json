@@ -50,8 +50,11 @@
 			"@format:php:check",
 			"@format:js:check"
 		],
-		"post-install-cmd": [
-			"./vendor/bin/install-classkit-resources"
+		"post-package-install": [
+			"@php ./vendor/bin/install-classkit-resources"
+		],
+		"post-update-cmd": [
+			"@php ./vendor/bin/install-classkit-resources"
 		]
 	},
 	"bin": [
