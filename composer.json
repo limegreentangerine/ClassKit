@@ -51,7 +51,10 @@
 			"@format:js:check"
 		],
 		"post-install-cmd": [
-			"npm install"
+			"./vendor/bin/install-classkit-resources"
 		]
-	}
+	},
+	"bin": [
+		"bin/install-classkit-resources"
+	]
 }
