@@ -89,9 +89,9 @@ foreach ($templateIterator as $item) {
 }
 
 $svelteComponentFile = './svelte-components.json';
-$componentList = file_get_contents($svelteComponentFile);
-if ($componentList) {
+if ($componentList = file_get_contents($svelteComponentFile)) {
     $componentListArr = json_decode($componentList, true, JSON_THROW_ON_ERROR);
+    var_dump($componentListArr);
     if (!in_array($installPath, $componentListArr)) {
         $componentListArr[] = $installPath;
 
@@ -99,6 +99,8 @@ if ($componentList) {
             fwrite(STDERR, "Unable to edit: {$svelteComponentFile}\n");
         }
     }
+} else {
+    fwrite(STDERR, "Unable to open: {$svelteComponentFile}\n");
 }
 
 echo "Component {$componentName} ({$componentHandle}) created at {$installPath}" . PHP_EOL;
