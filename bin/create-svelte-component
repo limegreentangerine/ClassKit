@@ -88,7 +88,9 @@ foreach ($templateIterator as $item) {
     }
 }
 
-$svelteComponentFile = './svelte-components.json';
+$rootPath = getcwd();
+var_dump($rootPath);
+$svelteComponentFile = '.' . DIRECTORY_SEPARATOR . 'svelte-components.json';
 if ($componentList = file_get_contents($svelteComponentFile)) {
     $componentListArr = json_decode($componentList, true, JSON_THROW_ON_ERROR);
     var_dump($componentListArr);
