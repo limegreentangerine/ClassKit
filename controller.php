@@ -5,7 +5,6 @@ namespace Concrete\Package\ClassKit;
 use Core;
 use Page;
 use Package;
-use SinglePage;
 use Concrete\Core\Entity\Package as PackageEntity;
 
 class Controller extends Package
