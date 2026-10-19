@@ -71,8 +71,6 @@ class Controller extends Package
     {
         $config = Core::make('config');
         $this->registerAliases($config);
-
-        $this->addSinglePage('/dashboard/svelte_components', $pkg, t('Svelte Components'));
     }
 
     /**
@@ -90,40 +88,6 @@ class Controller extends Package
         }
 
         $config->save('app.aliases', $aliases);
-    }
-
-    /**
-     * Add Single Page
-     *
-     * @param string        $path
-     * @param PackageEntity $pkg
-     * @param string        $name
-     * @param string        $description
-     *
-     * @return object SinglePage
-     */
-    protected function addSinglePage(string $path, PackageEntity $pkg, string $name = '', string $description = ''): Page
-    {
-        //Install single page
-        $sp = Page::getByPath($path);
-
-        if ($sp->isError() && $sp->getError() == COLLECTION_NOT_FOUND) {
-            $sp = SinglePage::add($path, $pkg);
-        }
-
-        //Set name and description
-        if (!empty($name) || !empty($description)) {
-            $data = [];
-            if (!empty($name)) {
-                $data['cName'] = $name;
-            }
-            if (!empty($description)) {
-                $data['cDescription'] = $description;
-            }
-            $sp->update($data);
-        }
-
-        return $sp;
     }
 
     public function getPackageName()
