@@ -294,7 +294,6 @@ TypeScript templates, and adds the component path to `svelte-components.json`
 in the project root. Edit the generated Svelte component and include its
 TypeScript entry point in the project's frontend build.
 
-
 ### Laravel Mix Updates for Svelte Component builds
 
 Copy and paste this snippet into your `webpack.mix.js` in the project root:
@@ -331,8 +330,8 @@ mix.webpackConfig({
 });
 
 for (const component of svelteComponents) {
-    const source = `${component}/src/index.ts`;
-    const destination = `${component}/view.js`;
+	const source = `${component}/src/index.ts`;
+	const destination = `${component}/view.js`;
 	mix.ts(source, destination);
 }
 ```

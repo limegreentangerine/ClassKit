@@ -2,11 +2,11 @@
 
 namespace Concrete\Package\ClassKit;
 
-use Concrete\Core\Entity\Package as PackageEntity;
-use Page;
-use SinglePage;
 use Core;
+use Page;
 use Package;
+use SinglePage;
+use Concrete\Core\Entity\Package as PackageEntity;
 
 class Controller extends Package
 {
@@ -92,6 +92,40 @@ class Controller extends Package
         $config->save('app.aliases', $aliases);
     }
 
+    /**
+     * Add Single Page
+     *
+     * @param string        $path
+     * @param PackageEntity $pkg
+     * @param string        $name
+     * @param string        $description
+     *
+     * @return object SinglePage
+     */
+    protected function addSinglePage(string $path, PackageEntity $pkg, string $name = '', string $description = ''): Page
+    {
+        //Install single page
+        $sp = Page::getByPath($path);
+
+        if ($sp->isError() && $sp->getError() == COLLECTION_NOT_FOUND) {
+            $sp = SinglePage::add($path, $pkg);
+        }
+
+        //Set name and description
+        if (!empty($name) || !empty($description)) {
+            $data = [];
+            if (!empty($name)) {
+                $data['cName'] = $name;
+            }
+            if (!empty($description)) {
+                $data['cDescription'] = $description;
+            }
+            $sp->update($data);
+        }
+
+        return $sp;
+    }
+
     public function getPackageName()
     {
         return t('ClassKit');
@@ -119,39 +153,5 @@ class Controller extends Package
         $pkg = Core::make('Concrete\Core\Package\PackageService')->getByHandle($this->pkgHandle);
         parent::upgrade();
         $this->installOrUpgrade($pkg);
-    }
-
-    /**
-     * Add Single Page
-     *
-     * @param string  $path
-     * @param PackageEntity $pkg
-     * @param string  $name
-     * @param string  $description
-     *
-     * @return object SinglePage
-     */
-    protected function addSinglePage(string $path, PackageEntity $pkg, string $name = '', string $description = ''): Page
-    {
-        //Install single page
-        $sp = Page::getByPath($path);
-
-        if ($sp->isError() && $sp->getError() == COLLECTION_NOT_FOUND) {
-            $sp = SinglePage::add($path, $pkg);
-        }
-
-        //Set name and description
-        if (!empty($name) || !empty($description)) {
-            $data = [];
-            if (!empty($name)) {
-                $data['cName'] = $name;
-            }
-            if (!empty($description)) {
-                $data['cDescription'] = $description;
-            }
-            $sp->update($data);
-        }
-
-        return $sp;
     }
 }

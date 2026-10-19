@@ -13,8 +13,5 @@
 			"$types": ["./resources/ts/types/index.ts"]
 		}
 	},
-	"include": [
-		"public/**/*.ts",
-		"svelte.d.ts"
-	]
+	"include": ["public/**/*.ts", "svelte.d.ts"]
 }
