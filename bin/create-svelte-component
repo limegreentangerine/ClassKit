@@ -39,6 +39,20 @@ $trimmedCreatePath = trim($createPath, '/');
 $installPath = $installPath . DIRECTORY_SEPARATOR . $trimmedCreatePath;
 
 $createPathArr = explode('/', $trimmedCreatePath);
+$validPaths = [
+    'blocks',
+    'elements',
+    'page_templates',
+    'single_pages',
+    'themes',
+    'views'
+];
+
+if (!in_array($createPathArr[0], $validPaths)) {
+    fwrite(STDERR, "Invalid path prefix: \033[1m{$createPathArr[0]}\033[0m\n");
+    exit(1);
+}
+
 if ($createPathArr[0] !== 'blocks') {
     $installPath = $installPath . DIRECTORY_SEPARATOR . 'view';
 }
