@@ -271,6 +271,72 @@ class Product extends BaseEntity
 
 This gives a consistent foundation for package entity classes that need standard ID lookups and Doctrine-friendly structure.
 
+## Svelte component workflow
+
+ClassKit includes a command for scaffolding Svelte custom elements in a Concrete
+CMS project. Run it from the project root, where `public/application` and `public/packages` are available:
+
+```bash
+vendor/bin/create-svelte-component
+```
+
+At the package-handle prompt, enter an existing package handle to create the
+component under `public/packages/<handle>`, or leave it blank to use
+`public/application`. Then enter a path relative to that directory. Paths must
+start with `blocks`, `elements`, `page_templates`, `single_pages`, `themes`, or
+`views`; non-block paths are placed in a `view` subdirectory.
+
+For example, choosing the package handle `store` and path
+`single_pages/product_details` creates a component under
+`public/packages/store/single_pages/product_details/view`. The command
+substitutes the component name and hyphenated handle in the Svelte, PHP, and
+TypeScript templates, and adds the component path to `svelte-components.json`
+in the project root. Edit the generated Svelte component and include its
+TypeScript entry point in the project's frontend build.
+
+
+### Laravel Mix Updates for Svelte Component builds
+
+Copy and paste this snippet into your `webpack.mix.js` in the project root:
+
+```js
+const svelteComponents = require('./svelte-components.json');
+const path = require('path');
+
+mix.webpackConfig({
+	module: {
+		rules: [
+			{
+				test: /\.svelte$/,
+				use: {
+					loader: 'svelte-loader',
+					options: {
+						preprocess: require('svelte-preprocess')(),
+						compilerOptions: {
+							customElement: true
+						}
+					}
+				}
+			}
+		]
+	},
+	resolve: {
+		extensions: ['.ts', '.js', '.svelte'],
+		conditionNames: ['svelte', '...'],
+		alias: {
+			$libs: path.resolve(__dirname, 'resources/ts/libs/index.ts'),
+			$types: path.resolve(__dirname, 'resources/ts/types/index.ts')
+		}
+	}
+});
+
+for (const component of svelteComponents) {
+    const source = `${component}/src/index.ts`;
+    const destination = `${component}/view.js`;
+	mix.ts(source, destination);
+}
+```
+
 ## Development
 
 Run the package test suite using Composer:

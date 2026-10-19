@@ -5,6 +5,13 @@ All notable changes to ClassKit are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the project uses [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] - 2026-10-19
+
+### Added
+
+- Documented the Svelte custom-element scaffolding workflow and added tests for
+  component generation and registry updates.
+
 ## [1.0.7] - 2026-10-06
 
 ### Removed
