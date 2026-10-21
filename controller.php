@@ -3,7 +3,6 @@
 namespace Concrete\Package\ClassKit;
 
 use Core;
-use Page;
 use Package;
 use Concrete\Core\Entity\Package as PackageEntity;
 
@@ -23,7 +22,7 @@ class Controller extends Package
      *
      * @var string
      */
-    protected $pkgVersion = '1.1.0';
+    protected $pkgVersion = '2.0.2';
 
     /**
      * The minimum Concrete version compatible with the package.
