@@ -43,3 +43,6 @@ coverage/
 # node
 node_modules/
 node_modules
+
+# C5 Symbols
+__IDE_SYMBOLS__.php

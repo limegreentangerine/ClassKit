@@ -2,10 +2,18 @@
 
 namespace ClassKit\Package\Traits;
 
-use ORM;
+use Core;
+use Exception;
 use Concrete\Core\Entity\Package;
 use Concrete\Core\Express\EntryList;
+use ClassKit\Express\CreateAttribute;
+use Concrete\Core\Entity\Express\Form;
+use Doctrine\ORM\EntityManagerInterface;
 use Concrete\Core\Support\Facade\Express;
+use Concrete\Core\Entity\Express\FieldSet;
+use Concrete\Core\Entity\Express\Entity as ExpressEntity;
+use Concrete\Core\Entity\Express\Control\AssociationControl;
+use Concrete\Core\Entity\Express\Control\AttributeKeyControl;
 
 /**
  * Trait ExpressTrait.
@@ -13,86 +21,90 @@ use Concrete\Core\Support\Facade\Express;
 trait ExpressTrait
 {
     /**
-     * Adds Express Object, or finds existing one
+     * Build Express Object
+     * - Builds an express object, sets its attributes and creates the default form
      *
-     * If Express Object is not set, build express object with given parameters
+     * @param string                      $handle
+     * @param string                      $plural
+     * @param string                      $name
+     * @param array<int, CreateAttribute> $attrs
+     * @param Package                     $pkg
+     * @param string                      $formName            - Default: Form
+     * @param string                      $fieldsetName        - Default: Details
+     * @param ?callable                   $beforeForm          - Function to run before form creations, usually to link express entities together
+     * @param array                       $associationControls
      *
-     * @param  string  $handle
-     * @param  string  $plural
-     * @param  string  $name
-     * @param  Package $pkg
-     * @return Express
+     * Example:
+     * $industry = $this->buildExpressObject('industry', 'industries', t('Industry'), $industryAttributes, $pkg);
+     * $this->buildExpressObject(
+     *    'partner', 'partners', t('Partner'), $partnerAttributes, $pkg,
+     *      beforeForm: function ($builder) use ($industry) {
+     *          $builder->buildAssociation()
+     *              ->addManyToMany($industry, 'industries', 'partners')
+     *              ->save();
+     *      },
+     *      associationControls: ['industries'],
+     *  );
+     *
+     * @return ExpressEntity
+     * @throws Exception
      */
-    protected function addExpressObject(string $handle, string $plural, string $name, Package $pkg): Express
-    {
-        return is_object(Express::getObjectByHandle($handle)) ? Express::getObjectByHandle($handle) : Express::buildObject($handle, $plural, $name, $pkg);
-    }
-
-    /**
-     * Some forms are just standalone and made with attributes, so this is a quick method for more quickly generating these forms
-     *
-     * @param  object  $expressObject
-     * @param  array   $fieldArray    Multidimensional array, such as array('FieldsetName'=>array('attribute_handle1', 'attributehandle2, ...))
-     * @param  string  $formName
-     * @return Express
-     */
-    protected function createExpressAttributeForm(Express $expressObject, array $fieldArray, string $formName = 'Form'): Express
-    {
-        if (is_object($expressObject) && is_array($fieldArray)) {
-            $form = $expressObject->buildForm($formName);
-
-            foreach ($fieldArray as $fieldsetName => $fields) {
-                $set = $form->addFieldSet($fieldsetName);
-                foreach ($fields as $attribute) {
-                    $set->addAttributeKeyControl($attribute);
-                }
-            }
-            $form->save();
+    protected function buildExpressObject(
+        string $handle,
+        string $plural,
+        string $name,
+        array $attrs,
+        Package $pkg,
+        string $formName = 'Form',
+        string $fieldsetName = 'Details',
+        ?callable $beforeForm = null,
+        array $associationControls = [],
+    ): ExpressEntity {
+        $entity = Express::getObjectByHandle($handle);
+        if ($entity) {
+            return $entity;
         }
 
-        return $expressObject;
-    }
+        $builder = Express::buildObject($handle, $plural, $name, $pkg);
 
-    /**
-     * More complicated forms have a few extra parameters to account for, but can also be automated a bit
-     *
-     * @param  object  $expressObject
-     * @param  array   $fieldArray    Multidimensional array, such as array('FieldsetName'=>array('attribute_handle1'=>'attribute", 'text_control'=>'text', 'association_name'=>'association'))
-     * @param  string  $formName
-     * @param  bool    $set_default
-     * @return Express
-     */
-    protected function createExpressForm(Express $expressObject, array $fieldArray, string $formName = 'Form', bool $set_default = true): Express
-    {
-        if (is_object($expressObject) && is_array($fieldArray)) {
-            $form = $expressObject->buildForm($formName);
-
-            foreach ($fieldArray as $fieldsetName => $fields) {
-                $set = $form->addFieldset($fieldsetName);
-                foreach ($fields as $name => $type) {
-                    switch ($type) {
-                        case 'attribute':
-                            $set->addAttributeKeyControl($name);
-                            break;
-                        case 'association':
-                            $set->addAssociationControl($name);
-                            break;
-                        case 'text':
-                            $set->addTextControl('', $name); //skips headline for ease
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            $form = $form->save();
-            if ($set_default == true) {
-                $expressObject->setDefaultViewForm($form);
-                $expressObject->setDefaultEditForm($form);
-            }
+        foreach ($attrs as $attr) {
+            $builder->addAttribute(
+                $attr->type_handle,
+                $attr->name,
+                $attr->handle,
+                $attr->settings,
+                $attr->akIsSearchable,
+                $attr->akIsSearchableIndexed,
+            );
         }
 
-        return $expressObject;
+        $entity = $builder->save();
+
+        if ($beforeForm) {
+            $beforeForm($builder);
+        }
+
+        $form = $builder->buildForm($formName);
+        $fieldset = $form->addFieldset($fieldsetName);
+
+        foreach ($attrs as $attr) {
+            $fieldset->addAttributeKeyControl($attr->handle);
+        }
+
+        foreach ($associationControls as $targetProperty) {
+            $fieldset->addAssociationControl($targetProperty);
+        }
+
+        $form = $form->save();
+
+        $entity->setDefaultEditForm($form);
+        $entity->setDefaultViewForm($form);
+
+        $em = Core::make(EntityManagerInterface::class);
+        $em->persist($entity);
+        $em->flush();
+
+        return $entity;
     }
 
     /**
@@ -113,17 +125,59 @@ trait ExpressTrait
     }
 
     /**
-     * Sets default Edit and View form for Express - Assumes entity is already set, not a builder
+     *  Create Express Attribute Form
      *
-     * @param object $entity
-     * @param object $form
+     * @param ExpressEntity               $entity
+     * @param array<int, CreateAttribute> $attrs
+     * @param array<int, string>          $associations
+     * @param string                      $formName     - Default: Form
+     * @param string                      $fieldsetName - Default: Details
+     * @param bool                        $setAsDefault
+     *
+     * @throws Exception
      */
-    protected function setDefaultForms($entity, $form): void
-    {
-        $entity->setDefaultViewForm($form);
-        $entity->setDefaultEditForm($form);
-        $entityManager = ORM::entityManager();
-        $entityManager->persist($entity);
-        $entityManager->flush();
+    public function createExpressAttributeForm(
+        ExpressEntity $entity,
+        array $attrs = [],
+        array $associations = [],
+        string $formName = 'Form',
+        string $fieldsetName = 'Details',
+        bool $setAsDefault = false,
+    ): void {
+        if ($entity) {
+            $form = new Form();
+            $form->setEntity($entity);
+            $form->setName($formName);
+
+            $fieldset = new FieldSet();
+            $fieldset->setForm($form);
+            $fieldset->setTitle($fieldsetName);
+
+            $controls = [];
+            foreach ($attrs as $attr) {
+                $control = new AttributeKeyControl();
+                $control->setAttributeKey($attr->handle);
+                $control->setFieldSet($fieldset);
+                $controls[] = $control;
+            }
+
+            foreach ($associations as $targetProperty) {
+                $control = new AssociationControl();
+                $control->setAssociation($targetProperty);
+                $control->setFieldSet($fieldset);
+                $controls[] = $control;
+            }
+
+            $fieldset->setControls($controls);
+
+            if ($setAsDefault) {
+                $entity->setDefaultEditForm($form);
+                $entity->setDefaultViewForm($form);
+            }
+
+            $em = Core::make(EntityManagerInterface::class);
+            $em->persist($entity);
+            $em->flush();
+        }
     }
 }
